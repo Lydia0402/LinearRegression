@@ -1,11 +1,20 @@
-#include "mainwindow.h"
+//#include "mainwindow.h"
+#include "dialog1.h"
 #include <QApplication>
+#include <QDialog>
+
+//#include "ui_mainwindow.h"
+#include "ui_dialog1.h"
+
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+    QApplication app(argc, argv);
 
-    return a.exec();
+    Ui::Dialog1 ui;
+    QDialog *dialog = new QDialog;
+    ui.setupUi(dialog);
+    dialog->show();
+
+    return app.exec();
 }

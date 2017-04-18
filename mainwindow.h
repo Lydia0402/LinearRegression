@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+class QAction;
+class QLabel;
+
 namespace Ui {
 class MainWindow;
 }
@@ -17,6 +20,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+//protected:
+//    void closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H
