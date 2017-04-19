@@ -10,7 +10,7 @@
 int main()
   {
     csvReader a;
-    if (!a.readData("/Users/lydia/Downloads/B4.csv",true)) std::cout <<a.getWarning();
+    if (!a.readData("B4.csv",true)) std::cout <<a.getWarning();
     for (std::string b: a.getTitleList() ) {
         std::cout <<b<<'\n';
     }

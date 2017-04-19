@@ -28,4 +28,7 @@ INCLUDEPATH += $$PWD/include
 HEADERS += \
     csvreader.h
 
+DISTFILES += \
+    res/B4.csv
+
 
