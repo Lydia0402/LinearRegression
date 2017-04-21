@@ -11,6 +11,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     csvreader.cpp \
+    lsregression.cpp
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked deprecated (the exact warnings
@@ -26,7 +27,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD/include
 
 HEADERS += \
-    csvreader.h
+    csvreader.h \
+    lsregression.h
 
 DISTFILES += \
     res/B4.csv

@@ -1,8 +1,6 @@
 #include "csvreader.h"
 
 csvReader::csvReader(){
-    nRows =0;
-    nCols = 0;
 }
 
 std::string csvReader::getWarning() {
@@ -21,8 +19,16 @@ void csvReader::clearAllInstantVariables() {
     warning.clear();
 }
 
-arma::mat csvReader::displaydata(){
+arma::mat csvReader::getDataMatrix(){
     return data;
+}
+
+int csvReader::getNCols() {
+    return nCols;
+}
+
+int csvReader::getNRows() {
+    return nRows;
 }
 
 bool csvReader::readData(std::string filename, bool title) {
@@ -109,6 +115,12 @@ bool csvReader::readData(std::string filename, bool title) {
             arma::mat buffer(firstrowvector);
             data = buffer;
             nRows = 1;
+            for (int i = 1; i < nCols+1; i++) {
+                std::stringstream buff;
+                buff<<'x'<<i;
+                std::string defaultTitle = buff.str();
+                titleList.push_back(defaultTitle);
+            }
         }
 
         if (nCols == 0) {

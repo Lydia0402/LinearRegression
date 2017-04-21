@@ -14,7 +14,8 @@ int main()
     for (std::string b: a.getTitleList() ) {
         std::cout <<b<<'\n';
     }
-    arma::cout <<a.displaydata();
+    arma::cout <<a.getDataMatrix();
+
   return 0;
 
   }
