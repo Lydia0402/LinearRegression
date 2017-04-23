@@ -24,6 +24,8 @@ private slots:
 //    Ui::Dialog1 *ui;
 
     void on_enterButton_clicked();
+    void on_checkBox_clicked();
+
 };
 
 #endif // DIALOG1_H
