@@ -82,8 +82,8 @@ bool LSregression::set(std::vector<int> listOfSelected,int y) {
 bool LSregression::solve(){
     arma::mat B;
     B= X.t();
-//    arma::mat XX= B * X;
-   // B = X.t() * X;
+    arma::mat XX= B /  X;
+    B = X.t() * X;
 //    Hat = X*arma::inv(X.t()*X)*X.t();
     return true;
 }

@@ -26,11 +26,37 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 INCLUDEPATH += $$PWD/include
 
+#QMAKE_LFLAGS += -F/path/to/framework/directory/
+
+LIBS += -framework Accelerate
+
 HEADERS += \
     csvreader.h \
-    lsregression.h
+    lsregression.h \
+
 
 DISTFILES += \
-    res/B4.csv
+    res/B4.csv \
+    res/data3.csv
 
 
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/armadillo/7.800.2/lib/release/ -larmadillo.7.80.2
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/armadillo/7.800.2/lib/debug/ -larmadillo.7.80.2
+else:unix: LIBS += -L$$PWD/armadillo/7.800.2/lib/ -larmadillo.7.80.2
+
+INCLUDEPATH += $$PWD/armadillo/7.800.2/include
+DEPENDPATH += $$PWD/armadillo/7.800.2/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/armadillo/7.800.2/lib/release/ -larmadillo.7.80.2
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/armadillo/7.800.2/lib/debug/ -larmadillo.7.80.2
+else:unix: LIBS += -L$$PWD/armadillo/7.800.2/lib/ -larmadillo.7.80.2
+
+INCLUDEPATH += $$PWD/armadillo/7.800.2/include
+DEPENDPATH += $$PWD/armadillo/7.800.2/include
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/armadillo/7.800.2/lib/release/ -larmadillo.7.80.2
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/armadillo/7.800.2/lib/debug/ -larmadillo.7.80.2
+else:unix: LIBS += -L$$PWD/armadillo/7.800.2/lib/ -larmadillo.7.80.2
+
+INCLUDEPATH += $$PWD/armadillo/7.800.2/include
+DEPENDPATH += $$PWD/armadillo/7.800.2/include
