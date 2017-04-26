@@ -13,7 +13,87 @@
   <property name="windowTitle">
    <string>LinearRregression</string>
   </property>
-  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QComboBox" name="methodcombobox">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>30</y>
+      <width>181</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Please select</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Linear1</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Linear2</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Linear3</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="methodlabel">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>30</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Method</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="detailButton">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>30</y>
+      <width>101</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Show detail</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="exitButton">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>30</y>
+      <width>80</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Exit</string>
+    </property>
+   </widget>
+   <widget class="QListView" name="listView">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>60</y>
+      <width>601</width>
+      <height>341</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>

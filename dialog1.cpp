@@ -36,8 +36,8 @@ void Dialog1::on_lineEdit_textChanged(){
 
 void Dialog1::on_enterButton_clicked()
 {
-    if(checkboxval == true ) QMessageBox::warning(this,tr("Warning"),("checkbox."),QMessageBox::Yes);
-    if(this->lineEdit->text()==tr("123"))                    // Judge
+    if (checkboxval == true ) QMessageBox::warning(this,tr("Warning"),("checkbox."),QMessageBox::Yes);  // check the state of check box
+    if (this->lineEdit->text()==tr("123"))                    // Judge
         accept();
         else
         {
