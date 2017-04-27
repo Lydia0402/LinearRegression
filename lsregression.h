@@ -4,26 +4,34 @@
 #include <armadillo>
 
 class LSregression
+
 {
+
 public:
     LSregression(csvReader read);
 
     bool set(std::vector<int> listOfSelected,int y);
 
+    arma::mat CookMeasure();
+
     std::string getWarning();
     arma::mat getX();
     arma::mat getY();
     arma::mat getHat();
+    arma::mat getbetaHat();
+    arma::mat getYHat();
+    arma::mat getResidual();
+    bool solve();
 
 private:
     csvReader reader;
     arma::mat data;
-    arma::mat X;
-    arma::mat Y;
-    arma::mat Hat;
+    arma::mat X,Y;
+    arma::mat betaHat, Hat, YHat, residual, CookResiduals;
     int n,k;
+    double SSR,SSres,MSres,SStotal,meanY;
     std::string warning;
-    bool solve();
+
 };
 
 #endif // LSREGRESSION_H

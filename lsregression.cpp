@@ -25,6 +25,17 @@ arma::mat LSregression::getHat() {
     return Hat;
 }
 
+arma::mat LSregression::getbetaHat() {
+    return betaHat;
+}
+
+arma::mat LSregression::getYHat() {
+    return YHat;
+}
+
+arma::mat LSregression::getResidual() {
+    return residual;
+}
 bool LSregression::set(std::vector<int> listOfSelected,int y) {
     X.clear();
 
@@ -47,6 +58,7 @@ bool LSregression::set(std::vector<int> listOfSelected,int y) {
                 }
             }
         }
+        arma::mat One(n,1); One.ones(); X=join_rows(One,X);
 
         // Check whether the list contains two identical numbers
         sort(listOfSelected.begin(),listOfSelected.end());
@@ -77,14 +89,28 @@ bool LSregression::set(std::vector<int> listOfSelected,int y) {
     }
 }
 
-// Private:
 
 bool LSregression::solve(){
-    arma::mat B;
-    B= X.t();
-    arma::mat XX= B /  X;
-    B = X.t() * X;
-//    Hat = X*arma::inv(X.t()*X)*X.t();
+    Hat = X*arma::inv(X.t()*X)*X.t();
+    betaHat = arma::inv(X.t()*X)*X.t()*Y;
+    YHat = X * betaHat;
+    residual = Y - YHat;
+    meanY = accu(Y) / n;
+    SSR = accu(square(YHat - meanY));
+    SSres = accu(square(residual));
+    SStotal = SSR + SSres;
+    MSres = SSres / (n- (k + 1));
     return true;
 }
 
+arma::mat LSregression::CookMeasure(){
+    CookResiduals.ones(n,1);
+    for (int i = 0; i < n; i++) {
+        double r_i = residual(i) / sqrt(MSres*(1-Hat(i,i)));
+        CookResiduals(i) = r_i * r_i * Hat(i,i) /
+                            ((k + 1) * (1 - Hat(i,i)));
+    }
+    return CookResiduals;
+}
+
+// Private:
