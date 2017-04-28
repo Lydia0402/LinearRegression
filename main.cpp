@@ -6,6 +6,7 @@
 #include <sstream>
 #include "csvreader.h"
 #include "lsregression.h"
+#include "robustregression.h"
 
 int main()
   {
@@ -24,8 +25,10 @@ int main()
 //        arma::mat c = b.getX();
 //        arma::cout <<c.size();
         b.solve();
-        arma::cout <<b.getbetaHat();
+        arma::cout <<median(b.getbetaHat()) <<"Yes";
         b.CookMeasure().raw_print(std::cout);
+        robustregression c(b);
+        arma::cout << c.solve();
     return 0;
     }
 }

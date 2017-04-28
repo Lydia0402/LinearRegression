@@ -3,10 +3,20 @@
 #include <armadillo>
 #include <vector>
 
+LSregression::LSregression(){
+}
+
 LSregression::LSregression(csvReader read){
     reader = read;
     data= reader.getDataMatrix();
     n = reader.getNRows();
+}
+
+bool LSregression::setDataSource(csvReader read){
+    reader = read;
+    data= reader.getDataMatrix();
+    n = reader.getNRows();
+    return true;
 }
 
 std::string LSregression::getWarning(){
@@ -36,6 +46,19 @@ arma::mat LSregression::getYHat() {
 arma::mat LSregression::getResidual() {
     return residual;
 }
+
+int LSregression::getK() {
+    return k;
+}
+
+int LSregression::getN() {
+    return n;
+}
+
+csvReader LSregression::getReader() {
+    return reader;
+}
+
 bool LSregression::set(std::vector<int> listOfSelected,int y) {
     X.clear();
 
@@ -112,5 +135,3 @@ arma::mat LSregression::CookMeasure(){
     }
     return CookResiduals;
 }
-
-// Private:

@@ -8,7 +8,11 @@ class LSregression
 {
 
 public:
+    LSregression();
+
     LSregression(csvReader read);
+
+    bool setDataSource(csvReader read);
 
     bool set(std::vector<int> listOfSelected,int y);
 
@@ -21,6 +25,9 @@ public:
     arma::mat getbetaHat();
     arma::mat getYHat();
     arma::mat getResidual();
+    csvReader getReader();
+    int getN();
+    int getK();
     bool solve();
 
 private:
