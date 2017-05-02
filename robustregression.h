@@ -3,21 +3,19 @@
 #include "csvreader.h"
 #include <armadillo>
 #include "lsregression.h"
+#include "regression.h"
 
-class robustregression
+class robustregression: public regression
 {
 public:
     robustregression(csvReader read);
     robustregression(LSregression LSR);
     bool setObjective();
-    bool set(int x, int y);
-    arma::mat solve();
+    bool solve();
 
 private:
-    csvReader reader;
     LSregression initial;
-    arma::mat X,Y;
-    arma::mat generateW(arma::mat beta);
+    arma::mat generateW(arma::mat beta, double t);
 };
 
 #endif // ROBUSTREGRESSION_H

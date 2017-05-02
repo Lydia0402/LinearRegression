@@ -42,6 +42,7 @@ SOURCES += main.cpp \
     lsregression.cpp \
     robustregression.cpp \
     mainwindow.cpp \
+    regression.cpp \
     dialog1.cpp
 
 HEADERS += \
@@ -49,15 +50,16 @@ HEADERS += \
     lsregression.h \
     robustregression.h \
     mainwindow.h \
+    regression.h \
     dialog1.h
+
+DESTDIR = $$PWD
 
 FORMS    += mainwindow.ui \
     dialog1.ui
 
-
 DISTFILES += \
-    res/B4.csv \
-    res/data3.csv
+    *.csv \
 
 
 win32:CONFIG(release, debug|release): LIBS += -L$$PWD/armadillo/7.800.2/lib/release/ -larmadillo.7.80.2

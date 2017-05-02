@@ -21,7 +21,27 @@
 #include <string>
 
 csvReader csvreader;
+
 bool checkboxval = false;
+
+Dialog1::Dialog1(QWidget *parent) : QDialog(parent){
+    setupUi(this);
+
+//    QRegExp regExp("");
+//    lineEdit->setValidator(new QRegExpValidator(regExp, this));
+
+//    connect(enterButton, SIGNAL(clicked()), this, SLOT(accept()));
+//    connect(enterButton, SIGNAL(clicked()), this, SLOT(on_checkBox_clicked(checkboxval)));
+}
+
+Dialog1::~Dialog1(){
+    //
+}
+
+void Dialog1::on_lineEdit_textChanged(){
+    enterButton->setEnabled(lineEdit->hasAcceptableInput());
+}
+
 
 void Dialog1::on_checkBox_clicked()
 {
@@ -38,26 +58,12 @@ void Dialog1::on_enterButton_clicked()
     {
         QString ss = QString::fromStdString(csvreader.getWarning());
         QMessageBox::warning(this,tr("Warning"),(ss),QMessageBox::Yes);    // warning
-        this->lineEdit->clear();                      // clear
-        this->lineEdit->setFocus();              // back to line 1
+        this->lineEdit->clear();                                           // clear
+        this->lineEdit->setFocus();                                        // back to line 1
     }
 }
 
-Dialog1::Dialog1(QWidget *parent) : QDialog(parent){
-    setupUi(this);
-
-//    QRegExp regExp("");
-//    lineEdit->setValidator(new QRegExpValidator(regExp, this));
-
-//    connect(enterButton, SIGNAL(clicked()), this, SLOT(accept()));
-//    connect(enterButton, SIGNAL(clicked()), this, SLOT(on_checkBox_clicked(checkboxval)));
+void Dialog1::on_exitButton_clicked()
+{
+    this->close();
 }
-
-void Dialog1::on_lineEdit_textChanged(){
-    enterButton->setEnabled(lineEdit->hasAcceptableInput());
-}
-
-
-
-
-

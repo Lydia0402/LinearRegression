@@ -24,6 +24,7 @@ void MainWindow::on_exitButton_clicked()
 //QTableWidget *tableWidget = new QTableWidget;
 
 void MainWindow::putdata(){
+    datatable->
     datatable->setRowCount(10); //设置行数为10
     datatable->setColumnCount(5); //设置列数为5
 //    tableWidget->setWindowTitle("QTableWidget & Item");

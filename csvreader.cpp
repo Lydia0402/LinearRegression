@@ -35,7 +35,15 @@ bool csvReader::readData(std::string filename, bool title) {
     std::ifstream infile;
     infile.open(filename.c_str());
     if (infile.fail()) {
+//        try {
+//            infile.exceptions(infile.failbit);
+//        } catch (const std::ios_base::failure & e)
+//        {
+//            std::cout << e.what() ;
+//        }
         warning = "Cannot open the file";
+        infile.clear();
+        infile.close();
         return false;
     }
     else {
@@ -47,6 +55,8 @@ bool csvReader::readData(std::string filename, bool title) {
             std::string titles;
             if (!std::getline(infile,titles,'\r')) {
                 warning = "This file is empty";
+                infile.clear();
+                infile.close();
                 return false;
             }
             std::stringstream ss(titles);
@@ -61,6 +71,8 @@ bool csvReader::readData(std::string filename, bool title) {
             std::string firstLine;
             if (!std::getline(infile,firstLine,'\r')){
                 warning = "This file doesn't contain any numerical data";
+                infile.clear();
+                infile.close();
                 return false;
             }
             std::stringstream ss2(firstLine);
@@ -76,6 +88,8 @@ bool csvReader::readData(std::string filename, bool title) {
             int size = firstRow.size();
             if (! (nCols == size)){
                 warning = "The number of attributes must match in all the rows";
+                infile.clear();
+                infile.close();
                 return false;
             }
 
@@ -94,6 +108,8 @@ bool csvReader::readData(std::string filename, bool title) {
             std::string firstLine;
             if (!std::getline(infile,firstLine,'\r')){
                 warning = "This file is empty";
+                infile.clear();
+                infile.close();
                 return false;
             }
             std::stringstream ss(firstLine);
@@ -125,6 +141,8 @@ bool csvReader::readData(std::string filename, bool title) {
 
         if (nCols == 0) {
             warning = "This file is empty";
+            infile.clear();
+            infile.close();
             return false;
         }
 
@@ -146,9 +164,12 @@ bool csvReader::readData(std::string filename, bool title) {
             }
             else {
                 warning = "Each row must have the same number of element";
+                infile.clear();
+                infile.close();
                 return false;
             }
         }
     }
+    infile.close();
     return true;
 }
