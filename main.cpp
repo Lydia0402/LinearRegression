@@ -51,13 +51,12 @@ int main(int argc, char *argv[]){
 //            QDialog *dialog = new QDialog;
 //            ui.setupUi(dialog);
 //            dialog->show();
-
     MainWindow main;
     Dialog1 d1;
     d1.show();
-
     if (d1.exec() == QDialog::Accepted){
         main.show();
+        main.putdata();
         return app.exec();
     }
 

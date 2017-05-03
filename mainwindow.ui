@@ -96,7 +96,7 @@
      <string>Exec</string>
     </property>
    </widget>
-   <widget class="QTableWidget" name="datatable">
+   <widget class="QTableView" name="datatable">
     <property name="geometry">
      <rect>
       <x>30</x>

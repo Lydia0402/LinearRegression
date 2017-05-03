@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
+     void putdata();
     ~MainWindow();
 
 private slots:
@@ -23,7 +24,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-    void putdata();
 //protected:
 //    void closeEvent(QCloseEvent *event);
 };

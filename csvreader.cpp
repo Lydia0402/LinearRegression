@@ -53,7 +53,7 @@ bool csvReader::readData(std::string filename, bool title) {
 
         if (title == true) {
             std::string titles;
-            if (!std::getline(infile,titles,'\r')) {
+            if (!std::getline(infile,titles)) {
                 warning = "This file is empty";
                 infile.clear();
                 infile.close();
@@ -69,7 +69,7 @@ bool csvReader::readData(std::string filename, bool title) {
             nCols = titleList.size(); // Set the number of columns as the size of titleList
 
             std::string firstLine;
-            if (!std::getline(infile,firstLine,'\r')){
+            if (!std::getline(infile,firstLine)){
                 warning = "This file doesn't contain any numerical data";
                 infile.clear();
                 infile.close();
@@ -106,7 +106,7 @@ bool csvReader::readData(std::string filename, bool title) {
 
         else {
             std::string firstLine;
-            if (!std::getline(infile,firstLine,'\r')){
+            if (!std::getline(infile,firstLine)){
                 warning = "This file is empty";
                 infile.clear();
                 infile.close();
@@ -147,7 +147,7 @@ bool csvReader::readData(std::string filename, bool title) {
         }
 
         std::string Line;
-        while(std::getline(infile,Line,'\r')){
+        while(std::getline(infile,Line)){
             std::stringstream ss(Line);
             std::string singleValue;
             std::vector<double> aRow;
