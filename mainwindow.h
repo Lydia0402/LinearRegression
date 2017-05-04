@@ -16,8 +16,10 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-     void putdata();
     ~MainWindow();
+    void putdata();
+    void col_select_test(int, int);
+
 
 private slots:
     void on_exitButton_clicked();
@@ -27,5 +29,6 @@ private:
 //protected:
 //    void closeEvent(QCloseEvent *event);
 };
+
 
 #endif // MAINWINDOW_H

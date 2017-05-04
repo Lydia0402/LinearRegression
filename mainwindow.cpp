@@ -28,36 +28,72 @@ void MainWindow::on_exitButton_clicked()
 
 //QTableWidget *tableWidget = new QTableWidget;
 
-void MainWindow::putdata(){
-    for (unsigned long i = 0; i < csvreader.getTitleList().size(); i++){
-        std::cout << csvreader.getTitleList()[i]<< std::endl;
+void MainWindow::putdata()
+{
+    QStandardItemModel *model;
+    model = new QStandardItemModel(csvreader.getNRows(), csvreader.getNCols() + 1);
+    this->datatable->setModel(model);
+
+    // Set header (title) for the data table.
+    model->setHeaderData(0, Qt::Horizontal, (" "));
+    for (int i = 1; i < csvreader.getNCols() + 1; i++)
+    {
+        QString str = QString::fromStdString(csvreader.getTitleList()[i - 1]);
+        model->setHeaderData(i, Qt::Horizontal, (str));
     }
 
-    /*QStandardItemModel *model;
-    model = new QStandardItemModel(csvreader.getNRows(), csvreader.getNCols());
-    this->datatable->setModel(model);
-    model->setHeaderData(0, Qt::Horizontal, tr("Label"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Quantity"));
-
-    for (int row = 0; row < 4; ++row) {
-        for (int column = 0; column < 2; ++column) {
-            QModelIndex index = model->index(row, column, QModelIndex());
-            model->setData(index, QVariant((row+1) * (column+1)));
+    // Set data for each cell in data table.
+    arma::mat matrix = csvreader.getDataMatrix();
+    for (int i = 1; i < csvreader.getNRows() + 1; i++)
+    {
+        QModelIndex rownum = model->index(i, 0, QModelIndex());
+        model->setData(rownum, i);
+        for (int j = 1; j < csvreader.getNCols() + 1; j++)
+        {
+            QModelIndex index = model->index(i, j, QModelIndex());
+            model->setData(index, matrix(i - 1, j - 1));
         }
     }
-    this->datatable->show()*/;
-}
-//tableWidget->setColumnCount(5); //设置列数为5
-//tableWidget->setWindowTitle("QTableWidget & Item");
-//tableWidget->resize(350, 200); //设置表格
-//QStringList header;
-//header<<"Month"<<"Description";
-//tableWidget->setHorizontalHeaderLabels(header);
-//tableWidget->setItem(0,0,new QTableWidgetItem("Jan"));
-//tableWidget->setItem(1,0,new QTableWidgetItem("Feb"));
-//tableWidget->setItem(2,0,new QTableWidgetItem("Mar"));
 
-//tableWidget->setItem(0,1,new QTableWidgetItem(QIcon("images/IED.png"), "Jan's month"));
-//tableWidget->setItem(1,1,new QTableWidgetItem(QIcon("images/IED.png"), "Feb's month"));
-//tableWidget->setItem(2,1,new QTableWidgetItem(QIcon("images/IED.png"), "Mar's month"));
-//tableWidget->show();
+    for (int i = 1; i < csvreader.getNCols() + 1; i++)
+    {
+        QStandardItem *Item = new QStandardItem();
+        Item->setCheckable(true);
+        Item->setCheckState(Qt::Unchecked);
+        model->setItem(0, i, Item);
+    }
+//    this->datatable->setColumnWidth(0, 40);
+    QHeaderView* headerView = this->datatable->verticalHeader();
+    headerView->setHidden(true);
+    this->datatable->resizeColumnsToContents();
+//    this->datatable->horizontalHeader()->sectionResizeMode(QHeaderView::ResizeToContents);
+    this->datatable->show();
+
+//    connect(this->datatable, SIGNAL(cellChanged(int,int)), this->datatable, SLOT(colselecttest(int, int)));
+}
+
+void MainWindow::col_select_test(int row, int col)
+{
+//    if (model)
+}
+
+
+// void changeTest(int row, int col)
+// {
+//     if(tableWidget ->item(row, col)->checkState() == Qt::Checked) //选中
+//         ...
+//     else
+//         ...
+// }
+
+//01	QTableWidget *tableWidget = new QTableWidget;
+//02	QTableWidgetItem *firstColumn = new QTableWidgetItem(tr("test"));
+//03	firstColumn->setCheckState(Qt::Checked);//加入复选框
+//04	connect(tableWidget, SIGNAL(cellChanged(int,int)), this, SLOT(changeTest(int, int)));
+//05	void changeTest(int row, int col)
+//06	{
+//07	    if(tableWidget ->item(row, col)->checkState() == Qt::Checked)
+//08	        ...
+//09	    else
+//10	        ...
+//11	}
