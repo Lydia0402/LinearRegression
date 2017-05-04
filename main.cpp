@@ -7,6 +7,7 @@
 #include "csvreader.h"
 #include "lsregression.h"
 #include "robustregression.h"
+#include "distribution.h"
 
 int main()
   {
@@ -28,7 +29,14 @@ int main()
         arma::cout <<median(b.getbetaHat()) <<"Yes";
         b.CookMeasure().raw_print(std::cout);
         robustregression c(b);
+        c.setT(1);
         arma::cout << c.solve();
+    sdNormal n;
+    std::cout<< n.pValue(3)<<std::endl;
+    studentT t;
+    t.set(10);
+    std::cout<< t.pdf(2);
+
     return 0;
     }
 }

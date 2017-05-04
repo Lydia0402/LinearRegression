@@ -22,5 +22,7 @@ bool LSregression::solve(){
     SSres = accu(square(residual));
     SStotal = SSR + SSres;
     MSres = SSres / (n- (k + 1));
+    RSquare = SSR / SStotal;
+    RadjSquare = 1 - (SSres / (n - (k + 1))) / (SStotal / (n - 1));
     return true;
 }

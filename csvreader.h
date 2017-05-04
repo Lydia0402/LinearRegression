@@ -49,6 +49,8 @@ private:
 
     void clearAllInstantVariables(); // Clear all the content
 
+    bool tryLineBreak(std::string filename, bool title, char lineBreak);
+
 };
 
 #endif // CSVREADER_H

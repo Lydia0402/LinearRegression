@@ -19,6 +19,7 @@ bool regression::setDataSource(csvReader read){
     return true;
 }
 
+
 std::string regression::getWarning(){
     return warning;
 }
@@ -53,6 +54,14 @@ int regression::getK() {
 
 int regression::getN() {
     return n;
+}
+
+double regression::getRSquare(){
+    return RSquare;
+}
+
+double regression::getRadjSquare(){
+    return RadjSquare;
 }
 
 csvReader regression::getReader() {
@@ -122,4 +131,9 @@ arma::mat regression::CookMeasure(){
                             ((k + 1) * (1 - Hat(i,i)));
     }
     return CookResiduals;
+}
+
+
+std::stringstream regression::printSummary() {
+
 }
