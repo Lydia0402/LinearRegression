@@ -10,8 +10,10 @@ robustregression::robustregression(LSregression LSR) {
     Y = LSR.getY();
 }
 
+
+// I use gradient decent to solve robust regression problem.
+
 bool robustregression::solve(){
-    double t = 1;
     arma::mat beta_0(initial.getbetaHat());
     arma::mat beta_n(initial.getK()+1,1);
     arma::mat beta_nplus1(initial.getK()+1,1);
@@ -27,6 +29,17 @@ bool robustregression::solve(){
     }
     betaHat = beta_nplus1;
     return true;
+}
+
+/* I use Huber's function as my loss function, thus I need to let the user input his choice
+ * of t (the threshold) before.*/
+
+bool robustregression::setT(double t) {
+    if (t > 0) {
+        this->t = t;
+        return true;
+    }
+    else return false;
 }
 
 arma::mat robustregression::generateW(arma::mat beta, double t){

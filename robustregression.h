@@ -10,11 +10,12 @@ class robustregression: public regression
 public:
     robustregression(csvReader read);
     robustregression(LSregression LSR);
-    bool setObjective();
+    bool setT(double t);
     bool solve();
 
 private:
     LSregression initial;
+    double t;
     arma::mat generateW(arma::mat beta, double t);
 };
 

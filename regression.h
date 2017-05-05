@@ -2,6 +2,7 @@
 #define REGRESSION_H
 #include "csvreader.h"
 #include <armadillo>
+#include <sstream>
 
 class regression
 {
@@ -13,7 +14,7 @@ public:
     bool set(std::vector<int> listOfSelected,int y);
 
     arma::mat CookMeasure();
-
+    std::string getSummary();
     std::string getWarning();
     arma::mat getX();
     arma::mat getY();
@@ -24,7 +25,10 @@ public:
     csvReader getReader();
     int getN();
     int getK();
+    double getRSquare();
+    double getRadjSquare();
     virtual bool solve() = 0;
+    std::stringstream printSummary();
 
 protected:
     csvReader reader;
@@ -32,7 +36,7 @@ protected:
     arma::mat X,Y;
     arma::mat betaHat, Hat, YHat, residual, CookResiduals;
     int n,k;
-    double SSR,SSres,MSres,SStotal,meanY;
+    double SSR,SSres,MSres,SStotal,meanY,RSquare,RadjSquare;
     std::string warning;
 };
 

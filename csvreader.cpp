@@ -32,19 +32,25 @@ int csvReader::getNRows() {
 }
 
 bool csvReader::readData(std::string filename, bool title) {
+    if (tryLineBreak(filename,title,'\r') == true) return true;
+    else if (tryLineBreak(filename,title,'\n') == true) return true;
+    else return false;
+}
+
+
+bool csvReader::tryLineBreak(std::string filename, bool title, char lineBreak) {
     std::ifstream infile;
     infile.open(filename.c_str());
     if (infile.fail()) {
-//        try {
-//            infile.exceptions(infile.failbit);
-//        } catch (const std::ios_base::failure & e)
-//        {
-//            std::cout << e.what() ;
-//        }
-        warning = "Cannot open the file";
-        infile.clear();
-        infile.close();
-        return false;
+        try {
+            infile.exceptions(infile.failbit);
+        } catch (const std::ios_base::failure & e)
+        {
+            warning = e.what();
+            infile.clear();
+            infile.close();
+            return false;
+        }
     }
     else {
         clearAllInstantVariables();
@@ -53,7 +59,7 @@ bool csvReader::readData(std::string filename, bool title) {
 
         if (title == true) {
             std::string titles;
-            if (!std::getline(infile,titles,'\r')) {
+            if (!std::getline(infile,titles,lineBreak)) {
                 warning = "This file is empty";
                 infile.clear();
                 infile.close();
@@ -69,7 +75,7 @@ bool csvReader::readData(std::string filename, bool title) {
             nCols = titleList.size(); // Set the number of columns as the size of titleList
 
             std::string firstLine;
-            if (!std::getline(infile,firstLine,'\r')){
+            if (!std::getline(infile,firstLine,lineBreak)){
                 warning = "This file doesn't contain any numerical data";
                 infile.clear();
                 infile.close();
@@ -82,7 +88,12 @@ bool csvReader::readData(std::string filename, bool title) {
 
             std::vector<double> firstRow;
             while(getline(ss2,singleValue,',')) {
+                std::string save = singleValue;
                 double element = atof(singleValue.c_str());
+                if ((element == 0) and (save != "0")) {
+                    warning = "Contains non-numeric data!";
+                    return false;
+                }
                 firstRow.push_back(element);
             }
             int size = firstRow.size();
@@ -106,7 +117,7 @@ bool csvReader::readData(std::string filename, bool title) {
 
         else {
             std::string firstLine;
-            if (!std::getline(infile,firstLine,'\r')){
+            if (!std::getline(infile,firstLine,lineBreak)){
                 warning = "This file is empty";
                 infile.clear();
                 infile.close();
@@ -119,7 +130,12 @@ bool csvReader::readData(std::string filename, bool title) {
 
             std::vector<double> firstRow;
             while(getline(ss,singleValue,',')) {
+                std::string save = singleValue;
                 double ele = atof(singleValue.c_str());
+                if ((ele == 0) and (save != "0")) {
+                    warning = "Contains non-numeric data!";
+                    return false;
+                }
                 firstRow.push_back(ele);
             }
 
@@ -147,12 +163,17 @@ bool csvReader::readData(std::string filename, bool title) {
         }
 
         std::string Line;
-        while(std::getline(infile,Line,'\r')){
+        while(std::getline(infile,Line,lineBreak)){
             std::stringstream ss(Line);
             std::string singleValue;
             std::vector<double> aRow;
             while(getline(ss,singleValue,',')) {
+                std::string save = singleValue;
                 double el = atof(singleValue.c_str());
+                if ((el == 0) and (save != "0")) {
+                    warning = "Contains non-numeric data!";
+                    return false;
+                }
                 aRow.push_back(el);
             }
             int size2 = aRow.size();

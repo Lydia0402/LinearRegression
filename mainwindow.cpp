@@ -5,6 +5,7 @@
 #include "QStandardItem"
 #include "csvreader.h"
 #include <iostream>
+#include <QObject>
 
 extern csvReader csvreader;
 
@@ -31,7 +32,7 @@ void MainWindow::on_exitButton_clicked()
 void MainWindow::putdata()
 {
     QStandardItemModel *model;
-    model = new QStandardItemModel(csvreader.getNRows(), csvreader.getNCols() + 1);
+    model = new QStandardItemModel(csvreader.getNRows() + 1, csvreader.getNCols() + 1);
     this->datatable->setModel(model);
 
     // Set header (title) for the data table.
@@ -55,6 +56,7 @@ void MainWindow::putdata()
         }
     }
 
+    // Set ckeckbox.
     for (int i = 1; i < csvreader.getNCols() + 1; i++)
     {
         QStandardItem *Item = new QStandardItem();
@@ -62,6 +64,7 @@ void MainWindow::putdata()
         Item->setCheckState(Qt::Unchecked);
         model->setItem(0, i, Item);
     }
+
 //    this->datatable->setColumnWidth(0, 40);
     QHeaderView* headerView = this->datatable->verticalHeader();
     headerView->setHidden(true);
@@ -69,31 +72,21 @@ void MainWindow::putdata()
 //    this->datatable->horizontalHeader()->sectionResizeMode(QHeaderView::ResizeToContents);
     this->datatable->show();
 
-//    connect(this->datatable, SIGNAL(cellChanged(int,int)), this->datatable, SLOT(colselecttest(int, int)));
+    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(col_select_test()));
 }
 
-void MainWindow::col_select_test(int row, int col)
+void MainWindow::col_select_test()
 {
-//    if (model)
+    choosebutton->setEnabled(true);
+    std::cout << "change";
+    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+    for (int i = 1; i < csvreader.getNCols() + 1; i++){
+        QStandardItem *Item = _model->item(0, i);
+        if(Item->checkState() == Qt::Checked){
+
+            std::cout << "Yeah";
+        }
+
+    }
 }
 
-
-// void changeTest(int row, int col)
-// {
-//     if(tableWidget ->item(row, col)->checkState() == Qt::Checked) //选中
-//         ...
-//     else
-//         ...
-// }
-
-//01	QTableWidget *tableWidget = new QTableWidget;
-//02	QTableWidgetItem *firstColumn = new QTableWidgetItem(tr("test"));
-//03	firstColumn->setCheckState(Qt::Checked);//加入复选框
-//04	connect(tableWidget, SIGNAL(cellChanged(int,int)), this, SLOT(changeTest(int, int)));
-//05	void changeTest(int row, int col)
-//06	{
-//07	    if(tableWidget ->item(row, col)->checkState() == Qt::Checked)
-//08	        ...
-//09	    else
-//10	        ...
-//11	}

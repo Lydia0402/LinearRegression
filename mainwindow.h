@@ -18,11 +18,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void putdata();
-    void col_select_test(int, int);
+
 
 
 private slots:
     void on_exitButton_clicked();
+    void col_select_test();
 
 private:
     Ui::MainWindow *ui;

@@ -43,7 +43,8 @@ SOURCES += main.cpp \
     robustregression.cpp \
     mainwindow.cpp \
     regression.cpp \
-    dialog1.cpp
+    dialog1.cpp \
+    distribution.cpp
 
 HEADERS += \
     csvreader.h \
@@ -51,7 +52,8 @@ HEADERS += \
     robustregression.h \
     mainwindow.h \
     regression.h \
-    dialog1.h
+    dialog1.h \
+    distribution.h
 
 DESTDIR = $$PWD
 
