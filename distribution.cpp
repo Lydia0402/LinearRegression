@@ -1,5 +1,7 @@
 #include "distribution.h"
 #include <cmath>
+#include <vector>
+#include <iostream>
 
 Distribution::Distribution() {}
 
@@ -24,7 +26,7 @@ double studentT::pdf (double x) {
 }
 
 double studentT::integration (double lower, double upper) {
-    int parts = 100;
+    int parts = 50;
     double x[parts + 1], y[parts + 1];
     double length = (upper - lower) / parts;
     for (int i = 0; i < parts + 1; i++) {
@@ -44,7 +46,7 @@ double studentT::integration (double lower, double upper) {
 
 double studentT::pValue (double x){
     double pValue = integration(0, x);
-    pValue = pValue * 2;
+    pValue = 1 - pValue * 2;
     return pValue;
 }
 
@@ -54,23 +56,29 @@ void Fisher::set(int v1, int v2) {
 }
 
 double Fisher::pdf(double x) {
-    double pdf = sqrt(pow(v1*x, v1)*pow(v2, v2)/pow((v1*x+v2),(v1+v2))) /
-                  (x * tgamma(v1/2)*tgamma(v2/2)/tgamma((v1+v2)/2));
+    if (x==0 ) return Fisher::pdf(0.00001);
+    double pdf =pow(v1,v1*0.5)*pow(v2,v2*0.5)*(tgamma(v1*0.5+v2*0.5))/((tgamma(v1*0.5)*tgamma(v2*0.5)))*(pow(x,(v1*0.5-1))/pow((v1*x+v2),(v1+v2)*0.5));
+            /*sqrt(pow(v1*x, v1)*pow(v2, v2)/pow((v1*x+v2),(v1+v2))) /
+                  (x * tgamma(v1/2)*tgamma(v2/2)/tgamma((v1+v2)/2));*/
+//    std::cout<< x <<" is " <<pdf;
     return pdf;
 }
 
 double Fisher::pValue(double x){
-    double pValue = 1 - integration(0,x);
+    double pValue = 1 - Fisher::integration(0,x);
     return pValue;
 }
 
 double Fisher::integration (double lower, double upper) {
-    int parts = 100;
-    double x[parts + 1], y[parts + 1];
+    int parts = 10000;
+    std::vector<double> x,y;
     double length = (upper - lower) / parts;
-    for (int i = 0; i < parts + 1; i++) {
-        x[i] = lower + i * length;
-        y[i] = Fisher::pdf(x[i]);
+    x.push_back(0);
+    double y0 = Fisher::pdf(0);
+    y.push_back(y0);
+    for (int i = 1; i < parts + 1; i++) {
+        x.push_back(lower + i * length);
+        y.push_back(Fisher::pdf(x[i]));
     }
     double sum = 0;
     for (int j = 1; j < parts; j += 2){

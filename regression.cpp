@@ -77,6 +77,8 @@ bool regression::set(std::vector<int> listOfSelected,int y) {
     }
 
     else {
+        this->listOfSelected = listOfSelected;
+        this->y = y;
         k = listOfSelected.size();
         X =data.col(listOfSelected[0]);
         if (k > 1) {
@@ -133,7 +135,3 @@ arma::mat regression::CookMeasure(){
     return CookResiduals;
 }
 
-
-std::stringstream regression::printSummary() {
-
-}
