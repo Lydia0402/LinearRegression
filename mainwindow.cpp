@@ -2,32 +2,37 @@
 #include "ui_mainwindow.h"
 #include <QTableWidget>
 #include <QTableWidgetItem>
-#include "QStandardItem"
-#include "csvreader.h"
-#include <iostream>
 #include <QObject>
+#include "QStandardItem"
+#include <QMessageBox>
+#include <iostream>
+#include <vector>
+#include "csvreader.h"
+#include "lsregression.h"
 
 extern csvReader csvreader;
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
-//    ,ui (new Ui::MainWindow)
+
 {
-//    ui->setupUi(this);
+
     setupUi(this);
 }
+
 
 MainWindow::~MainWindow()
 {
 //    delete ui;
 }
 
+
 void MainWindow::on_exitButton_clicked()
 {
     this->close();
 }
 
-//QTableWidget *tableWidget = new QTableWidget;
 
 void MainWindow::putdata()
 {
@@ -68,25 +73,216 @@ void MainWindow::putdata()
 //    this->datatable->setColumnWidth(0, 40);
     QHeaderView* headerView = this->datatable->verticalHeader();
     headerView->setHidden(true);
+
+    // Resize
     this->datatable->resizeColumnsToContents();
-//    this->datatable->horizontalHeader()->sectionResizeMode(QHeaderView::ResizeToContents);
+
+    // Set the table become no edit mode. (Ban users from editing the table)
+    this->datatable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // Show
     this->datatable->show();
 
+    /* Connect itemchanged signal to slots.
+    *This will listen to the checkbox in table.*/
     connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(col_select_test()));
 }
 
+
 void MainWindow::col_select_test()
 {
-    choosebutton->setEnabled(true);
-    std::cout << "change";
-    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
-    for (int i = 1; i < csvreader.getNCols() + 1; i++){
-        QStandardItem *Item = _model->item(0, i);
-        if(Item->checkState() == Qt::Checked){
+    if (methodActivated)
+    {
+        setxbutton->setEnabled(true);
+        setybutton->setEnabled(true);
+//        cookmeasure->setCheckable(true);
 
-            std::cout << "Yeah";
+    }
+    else col_set = true;
+
+//    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+//    for (int i = 1; i < csvreader.getNCols() + 1; i++){
+//        QStandardItem *Item = _model->item(0, i);
+//        if(Item->checkState() == Qt::Checked){
+//            std::cout << "Yeah";
+//        }
+//    }
+}
+
+
+void MainWindow::on_setxbutton_clicked()
+{
+    isXset = true;
+
+    // Button set part.
+    if (isYset)
+    {
+        setSbutton->setEnabled(true);
+        cookmeasure->setCheckable(true);
+        execButton->setEnabled(true);
+    }
+
+    if (isrobust && isYset)
+    {
+        setTbutton->setEnabled(true);
+    }
+
+    // Get the changed checkbox.
+    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+//    std::vector<int> tempvec;
+    for (int i = 1; i < csvreader.getNCols() + 1; i++)
+    {
+        QStandardItem *Item = _model->item(0, i);
+        if (Item->checkState() == Qt::Checked)
+        {
+           dataX.push_back(i);
+           Item->setCheckState(Qt::Unchecked);
+        }
+    }
+
+    if (methodtype == 1 && dataX.size() != 1)
+    {
+        QMessageBox::warning(this,tr("Warning"),("Please select only one X for simple linear regression."), QMessageBox::Yes);
+    }
+}
+
+
+void MainWindow::on_setybutton_clicked()
+{
+    isYset = true;
+
+    // Button set part.
+    if (isXset)
+    {
+        setSbutton->setEnabled(true);
+//        cookmeasure->setCheckable(true);
+        execButton->setEnabled(true);
+    }
+
+    if (isrobust && isXset)
+    {
+        setTbutton->setEnabled(true);
+    }
+
+    // Get the changed checkbox
+    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+    std::vector<int> tempvec;
+    for (int i = 1; i < csvreader.getNCols() + 1; i++)
+    {
+        QStandardItem *Item = _model->item(0, i);
+        if (Item->checkState() == Qt::Checked)
+        {
+           tempvec.push_back(i);
+           Item->setCheckState(Qt::Unchecked);
+        }
+    }
+
+    if (tempvec.size() != 1)
+    {
+        QMessageBox::warning(this,tr("Warning"),("Invalid operation, Please select only one Y for regression."), QMessageBox::Yes);
+    }
+    else
+    {
+        dataY = tempvec[0];
+    }
+}
+
+
+void MainWindow::on_methodcombobox_activated(const QString &arg1)
+{
+    if (arg1 == "Please select")
+    {
+        cookmeasure->setCheckable(false);
+        setxbutton->setEnabled(false);
+        setybutton->setEnabled(false);
+        setSbutton->setEnabled(false);
+        execButton->setEnabled(false);
+        setTbutton->setEnabled(false);
+    }
+
+    if (arg1 == "Simple Least Square Regression")
+    {
+        methodtype = 1;
+        /* This part is to ensure when the user change method during operation,
+         * all the button will be disabled again.                               */
+        isXset = isYset = false;
+        cookmeasure->setCheckable(false);
+        setxbutton->setEnabled(false);
+        setybutton->setEnabled(false);
+        setSbutton->setEnabled(false);
+        execButton->setEnabled(false);
+        setTbutton->setEnabled(false);
+
+        methodActivated = true;
+        if (col_set){
+            setxbutton->setEnabled(true);
+            setybutton->setEnabled(true);
+        }
+
+    }
+    if (arg1 == "Multiple Least Square Regression")
+    {
+        methodtype = 2;
+        /* This part is to ensure when the user change method during operation,
+         * all the button will be disabled again.                               */
+        isXset = isYset = false;
+        cookmeasure->setCheckable(false);
+        setxbutton->setEnabled(false);
+        setybutton->setEnabled(false);
+        setSbutton->setEnabled(false);
+        execButton->setEnabled(false);
+        setTbutton->setEnabled(false);
+        methodActivated = true;
+
+        if (col_set){
+            setxbutton->setEnabled(true);
+            setybutton->setEnabled(true);
+        }
+
+    }
+    if (arg1 == "Robust Regression")
+    {
+        methodtype = 3;
+        /* This part is to ensure when the user change method during operation,
+         * all the button will be disabled again.                               */
+        isXset = isYset = false;
+        cookmeasure->setCheckable(false);
+        setxbutton->setEnabled(false);
+        setybutton->setEnabled(false);
+        setSbutton->setEnabled(false);
+        execButton->setEnabled(false);
+        setTbutton->setEnabled(false);
+        methodActivated = true;
+        isrobust = true;
+
+        if (col_set){
+            setxbutton->setEnabled(true);
+            setybutton->setEnabled(true);
         }
 
     }
 }
 
+
+void MainWindow::on_execButton_clicked()
+{
+    if (methodtype == 1){
+        LSregression lsregression(csvreader);
+    }
+}
+
+
+void MainWindow::on_cookmeasure_clicked()
+{
+    iscookmeasure = !iscookmeasure;
+}
+
+
+void MainWindow::on_setSbutton_clicked()
+{
+    std::string s = this->significanceedit->text().toStdString();
+}
+
+void MainWindow::on_setTbutton_clicked()
+{
+    std::string s = this->huberedit->text().toStdString();
+}

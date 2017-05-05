@@ -3,6 +3,9 @@
 #include "csvreader.h"
 #include <armadillo>
 #include <sstream>
+#include <cmath>
+#include "distribution.h"
+#include <string>
 
 class regression
 {
@@ -10,9 +13,7 @@ public:
     regression();
     regression(csvReader read);
     bool setDataSource(csvReader read);
-
     bool set(std::vector<int> listOfSelected,int y);
-
     arma::mat CookMeasure();
     std::string getSummary();
     std::string getWarning();
@@ -28,14 +29,19 @@ public:
     double getRSquare();
     double getRadjSquare();
     virtual bool solve() = 0;
-    std::stringstream printSummary();
+    void printSummary(std::vector<std::vector<std::string>> & summary,
+                      std::vector<std::string> & text);
 
 protected:
     csvReader reader;
+    std::vector<int> listOfSelected;
+    int y;
     arma::mat data;
     arma::mat X,Y;
     arma::mat betaHat, Hat, YHat, residual, CookResiduals;
     int n,k;
+    double significanceLevel;
+
     double SSR,SSres,MSres,SStotal,meanY,RSquare,RadjSquare;
     std::string warning;
 };

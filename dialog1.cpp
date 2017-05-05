@@ -24,7 +24,8 @@ csvReader csvreader;
 
 bool checkboxval = false;
 
-Dialog1::Dialog1(QWidget *parent) : QDialog(parent){
+Dialog1::Dialog1(QWidget *parent) : QDialog(parent)
+{
     setupUi(this);
 
 //    QRegExp regExp("");
@@ -34,11 +35,14 @@ Dialog1::Dialog1(QWidget *parent) : QDialog(parent){
 //    connect(enterButton, SIGNAL(clicked()), this, SLOT(on_checkBox_clicked(checkboxval)));
 }
 
-Dialog1::~Dialog1(){
+Dialog1::~Dialog1()
+{
     //
 }
 
-void Dialog1::on_lineEdit_textChanged(){
+
+void Dialog1::on_lineEdit_textChanged()
+{
     enterButton->setEnabled(lineEdit->hasAcceptableInput());
 }
 
@@ -47,6 +51,7 @@ void Dialog1::on_checkBox_clicked()
 {
     checkboxval = !checkboxval;
 }
+
 
 void Dialog1::on_enterButton_clicked()
 {
@@ -62,6 +67,7 @@ void Dialog1::on_enterButton_clicked()
         this->lineEdit->setFocus();                                        // back to line 1
     }
 }
+
 
 void Dialog1::on_exitButton_clicked()
 {

@@ -77,6 +77,8 @@ bool regression::set(std::vector<int> listOfSelected,int y) {
     }
 
     else {
+        this->listOfSelected = listOfSelected;
+        this->y = y;
         k = listOfSelected.size();
         X =data.col(listOfSelected[0]);
         if (k > 1) {
@@ -121,7 +123,57 @@ bool regression::set(std::vector<int> listOfSelected,int y) {
     }
 }
 
+void regression::printSummary(std::vector<std::vector<std::string>> & summary,
+                  std::vector<std::string> & text) {
+    std::vector<std::string> titles = reader.getTitleList();
+    arma::mat C = inv(X.t() * X);
+    std::vector<std::string> firstline= {"name", "prediction", "t-statistic", "p-value", "Acceptance of null hypothesis"};
+    summary.push_back(firstline);
+    studentT::studentT T;
+    T.set(n-k-1);
+    int size = betaHat.size();
+    for (int i =0; i< size; i++) {
+        std::vector<std::string> line;
+        if (i == 0) line.push_back("intercept");
+        else line.push_back(titles[listOfSelected[i-1]]);
+        double prediction = betaHat(i);
+        line.push_back(std::to_string(prediction));
+        double t = betaHat(i) / sqrt(MSres*C(i,i));
+        line.push_back(std::to_string(t));
+        double pValue = T.pValue(std::abs(t));
+        line.push_back(std::to_string(pValue));
+        if (pValue >= significanceLevel) line.push_back("Reject");
+        else line.push_back("Accept");
+        summary.push_back(line);
+    }
+    std::string line1 = "";
+    line1 = line1 + "R^2: " + std::to_string(RSquare) + ", ";
+    line1 = line1 + "Radj^2: " + std::to_string(RadjSquare);
+    text.push_back(line1);
+    std::string line2 = "";
+    line2 = line2 + "F statistic: ";
+    double f = (SSR / k) / (SSres / (n - k - 1));
+    line2 += std::to_string(f);
+    line2 += " (v1 = ";
+    line2 += std::to_string(k);
+    line2 += ", v2 = ";
+    line2 += std::to_string(n - k - 1);
+    line2 += "), p-value = ";
+    Fisher::Fisher F;
+    F.set(k, n - k - 1);
+    double pValue = F.pValue(f);
+    line2 += std::to_string(pValue);
+    text.push_back(line2);
+    std::string line3 = "";
+    line3 += "Number of data points n = ";
+    line3 += std::to_string(n);
+    line3 += ", Number of features k = ";
+    line3 += std::to_string(k);
+    text.push_back(line3);
+}
 
+// Return Cook's measure:
+// https://en.wikipedia.org/wiki/Cook%27s_distance
 
 arma::mat regression::CookMeasure(){
     CookResiduals.ones(n,1);
@@ -133,7 +185,3 @@ arma::mat regression::CookMeasure(){
     return CookResiduals;
 }
 
-
-std::stringstream regression::printSummary() {
-
-}
