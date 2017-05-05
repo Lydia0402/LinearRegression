@@ -14,6 +14,8 @@ public:
     regression(csvReader read);
     bool setDataSource(csvReader read);
     bool set(std::vector<int> listOfSelected,int y);
+    bool setSignificance(double significanceLevel);
+    
     arma::mat CookMeasure();
     std::string getSummary();
     std::string getWarning();
@@ -28,6 +30,7 @@ public:
     int getK();
     double getRSquare();
     double getRadjSquare();
+    
     virtual bool solve() = 0;
     void printSummary(std::vector<std::vector<std::string>> & summary,
                       std::vector<std::string> & text);

@@ -66,7 +66,9 @@ bool robustregression::setT(double t) {
 // See Wikipedia for reference: https://en.wikipedia.org/wiki/Huber_loss
 
 arma::mat robustregression::generateW(arma::mat beta, double t){
-
+    
+    // First calculate robust estimation for standard deviation
+    
     arma::mat res(initial.getN(),1);
     for (int i = 0; i < initial.getN(); i++) {
          arma::mat resi = Y.row(i) - X.row(i) * beta;
@@ -81,7 +83,9 @@ arma::mat robustregression::generateW(arma::mat beta, double t){
     }
     res = abs(res);
     double MADN = med / 0.6745;
-
+    
+    // Then construct W matrix using Huber's function
+    
     arma::mat W(initial.getN(),initial.getN());
     W.zeros();
     for (int i = 0; i < initial.getN(); i++) {

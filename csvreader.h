@@ -50,6 +50,8 @@ private:
     void clearAllInstantVariables(); // Clear all the content
 
     bool tryLineBreak(std::string filename, bool title, char lineBreak);
+    /* Since different csv files have different line break, some is '\r' while some is
+     * '\n', the program will try each one.*/
 
 };
 

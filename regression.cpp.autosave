@@ -19,6 +19,16 @@ bool regression::setDataSource(csvReader read){
     return true;
 }
 
+bool regression::setSignificance(double significanceLevel){
+    if (0 < significanceLevel < 1) {
+        this-> significanceLevel = significanceLevel;
+        return true;
+    }
+    else {
+        warning = "Significance level must lie between 0 and 1!";
+        return false;
+    }
+}
 
 std::string regression::getWarning(){
     return warning;

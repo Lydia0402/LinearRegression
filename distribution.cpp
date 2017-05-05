@@ -15,6 +15,7 @@ double sdNormal::pValue (double x){
 
 // For student t distribution and F distribution, since there is no direct closed form
 // function that I can use, I use numerical integration (Simpson's rule) to solve it.
+
 void studentT::set(int v){
     this->v = v;
 }
@@ -57,10 +58,8 @@ void Fisher::set(int v1, int v2) {
 
 double Fisher::pdf(double x) {
     if (x==0 ) return Fisher::pdf(0.00001);
-    double pdf =pow(v1,v1*0.5)*pow(v2,v2*0.5)*(tgamma(v1*0.5+v2*0.5))/((tgamma(v1*0.5)*tgamma(v2*0.5)))*(pow(x,(v1*0.5-1))/pow((v1*x+v2),(v1+v2)*0.5));
-            /*sqrt(pow(v1*x, v1)*pow(v2, v2)/pow((v1*x+v2),(v1+v2))) /
-                  (x * tgamma(v1/2)*tgamma(v2/2)/tgamma((v1+v2)/2));*/
-//    std::cout<< x <<" is " <<pdf;
+    double pdf =pow(v1,v1*0.5)*pow(v2,v2*0.5)*(tgamma(v1*0.5+v2*0.5))/
+            ((tgamma(v1*0.5)*tgamma(v2*0.5)))*(pow(x,(v1*0.5-1))/pow((v1*x+v2),(v1+v2)*0.5));
     return pdf;
 }
 
