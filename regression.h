@@ -74,7 +74,7 @@ protected:
     arma::mat X,Y;
     arma::mat betaHat, Hat, YHat, residual, CookResiduals, Rstudent;
     int n,k;
-    double significanceLevel;
+    double significanceLevel = 0.05;
     double SSR,SSres,MSres,SStotal,meanY,RSquare,RadjSquare;
     std::string warning;
 
