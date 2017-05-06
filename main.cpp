@@ -12,7 +12,6 @@
 #include <QDialog>
 #include "mainwindow.h"
 #include "dialog1.h"
-#include "graphdialog.h"
 
 //#include <QMainWindow>
 
@@ -60,7 +59,6 @@ int main(int argc, char *argv[]){
 //            dialog->show();
     MainWindow main;
     Dialog1 d1;
-    graphdialog d2;
     d1.show();
     if (d1.exec() == QDialog::Accepted)
     {

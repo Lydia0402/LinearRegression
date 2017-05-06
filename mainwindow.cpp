@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "graphdialog.h"
 #include "ui_graphdialog.h"
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -85,6 +84,9 @@ void MainWindow::putdata()
     // Set the table become no edit mode. (Ban users from editing the table)
     this->datatable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     // Show
+    this->tab2->setVisible(false);
+    this->tab2->setEnabled(false);
+    this->tabWidget->setCurrentIndex(0);
     this->datatable->show();
 
     /* Connect itemchanged signal to slots.
@@ -117,6 +119,9 @@ void MainWindow::col_select_test()
 void MainWindow::on_setxbutton_clicked()
 {
     isXset = true;
+    dataX.clear();
+
+    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
 
     // Button set part.
     if (isYset)
@@ -132,7 +137,7 @@ void MainWindow::on_setxbutton_clicked()
     }
 
     // Get the changed checkbox.
-    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+
 //    std::vector<int> tempvec;
     for (int i = 1; i < csvreader.getNCols() + 1; i++)
     {
@@ -148,13 +153,25 @@ void MainWindow::on_setxbutton_clicked()
     {
         QMessageBox::warning(this,tr("Warning"),("Please select only one X for simple linear regression."), QMessageBox::Yes);
     }
+
+    // Background change.
+    int datasize = dataX.size();
+    for (int i = 0; i < datasize; i++)
+    {
+        int colnum = dataX[i];
+        for (int j = 1; j < csvreader.getNRows() + 1; j++)
+        {
+            QStandardItem *item = _model->item(j, colnum + 1);
+            item->setForeground(QBrush(QColor(0, 0, 255)));
+        }
+    }
+
 }
 
 
 void MainWindow::on_setybutton_clicked()
 {
     isYset = true;
-
     // Button set part.
     if (isXset)
     {
@@ -188,12 +205,30 @@ void MainWindow::on_setybutton_clicked()
     else
     {
         dataY = tempvec[0];
+
+        // Background change.
+        for (int j = 1; j < csvreader.getNRows() + 1; j++)
+        {
+            QStandardItem *item = _model->item(j, dataY + 1);
+            item->setForeground(QBrush(QColor(255, 0, 0)));
+        }
     }
 }
 
 
 void MainWindow::on_methodcombobox_activated(const QString &arg1)
 {
+    // Background reset.
+    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+    for (int i = 1; i < csvreader.getNRows() + 1; i++)
+    {
+        for (int j = 1; j < csvreader.getNCols() + 1; j++)
+        {
+            QStandardItem *item = _model->item(i, j);
+            item->setForeground(QBrush(QColor(0, 0, 0)));
+        }
+    }
+
     if (arg1 == "Please select")
     {
         cookmeasure->setCheckable(false);
@@ -291,7 +326,7 @@ void MainWindow::on_execButton_clicked()
 {
     cookmeasure->setCheckable(true);
     residualbutton->setEnabled(true);
-    this->datatable->setVisible(false);
+//    this->datatable->setVisible(false);
     if (methodtype == 1)
     {
         LSregression lsregression(csvreader);
@@ -368,7 +403,8 @@ void MainWindow::on_setTbutton_clicked()
 void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std::vector<std::string> text)
 {
     int size1 = summary.size();
-    for (int i = 0; i < size1; i++){
+    for (int i = 0; i < size1; i++)
+    {
         int size2 = summary[i].size();
 
         std::string str;
@@ -382,7 +418,6 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
         this->textBrowser->append(qstr);
     }
     this->textBrowser->append(" ");
-    this->textBrowser->append(" ");
     int size3 = text.size();
 
     for (int i = 0; i <size3; i++)
@@ -392,12 +427,47 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
         QString qstring = QString::fromStdString(textstr);
         this->textBrowser->append(qstring);
     }
-
+    this->textBrowser->append(" ");
+    this->textBrowser->append(" ");
+    this->textBrowser->append(" ");
 }
+
+
+void MainWindow::plotSetData()
+{
+    arma::mat originmat = csvreader.getDataMatrix();
+    QVector<double> x(csvreader.getNRows()), y(csvreader.getNRows());
+
+    int col_x = dataX[0];
+    int col_y = dataY;
+    for (int i = 0; i < csvreader.getNRows(); i++)
+    {
+        x[i] = originmat(i, col_x);
+        y[i] = originmat(i, col_y);
+    }
+    this->graph->xAxis->setLabel("X");
+    this->graph->yAxis->setLabel("Y");
+    this->graph->xAxis->setRange(-50, 100);
+    this->graph->yAxis->setRange(-3000, 10000);
+    this->graph->addGraph();
+    this->graph->graph(0)->setPen(QColor(50, 50, 50, 255));
+    this->graph->graph(0)->setLineStyle(QCPGraph::lsNone);
+    this->graph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+    this->graph->graph(0)->setData(x, y);
+    this->graph->replot();
+}
+
 
 
 void MainWindow::on_residualbutton_clicked()
 {
-    graphdialog d2;
-    d2.exec();
+    if (methodtype == 1)
+    {
+        plotSetData();
+//        this->tab2->setEnabled(true);
+
+    }
 }
+
+
+
