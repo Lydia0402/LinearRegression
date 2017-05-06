@@ -13,7 +13,7 @@ CONFIG += c++11
 CONFIG += console
 CONFIG -= app_bundle
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = CPP_regression_project
 TEMPLATE = app
@@ -45,7 +45,8 @@ SOURCES += main.cpp \
     regression.cpp \
     dialog1.cpp \
     distribution.cpp \
-    graph.cpp
+    graph.cpp \
+    qcustomplot.cpp
 
 HEADERS += \
     csvreader.h \
@@ -56,7 +57,8 @@ HEADERS += \
     dialog1.h \
     distribution.h \
     residual.h \
-    graph.h
+    graph.h \
+    qcustomplot.h
 
 DESTDIR = $$PWD
 
