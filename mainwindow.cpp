@@ -358,14 +358,19 @@ void MainWindow::on_setTbutton_clicked()
 
 }
 
-void MainWindow::putsummary(std::vector<std::vector<std::string>> summary, std::vector<std::string> text)
-{
 
-    for (int i = 0; i < summary.size(); i++){
-        for (int j = 0; j < summary[i].size(); j++){
-                QString str = QString::fromStdString(summary[i][j]);
-                this->textBrowser->append(str);
-        }
+void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std::vector<std::string> text)
+{
+    int size1 = summary.size();
+    for (int i = 0; i < size1; i++){
+        int size2 = summary[i].size();
+        std::cout << size2;
+//        for (int j = 0; j < size2; j++){
+//                QString str = QString::fromStdString(summary[i][j]);
+//                this->textBrowser->append(str);
+//        }
     }
 
 }
+
+

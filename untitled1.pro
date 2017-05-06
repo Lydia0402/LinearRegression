@@ -44,7 +44,8 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     regression.cpp \
     dialog1.cpp \
-    distribution.cpp
+    distribution.cpp \
+    graph.cpp
 
 HEADERS += \
     csvreader.h \
@@ -54,12 +55,14 @@ HEADERS += \
     regression.h \
     dialog1.h \
     distribution.h \
-    residual.h
+    residual.h \
+    graph.h
 
 DESTDIR = $$PWD
 
 FORMS    += mainwindow.ui \
-    dialog1.ui
+    dialog1.ui \
+    graph.ui
 
 DISTFILES += \
     *.csv \
