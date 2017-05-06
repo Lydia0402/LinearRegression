@@ -137,7 +137,7 @@ void MainWindow::on_setxbutton_clicked()
         QStandardItem *Item = _model->item(0, i);
         if (Item->checkState() == Qt::Checked)
         {
-           dataX.push_back(i);
+           dataX.push_back(i - 1);
            Item->setCheckState(Qt::Unchecked);
         }
     }
@@ -174,7 +174,7 @@ void MainWindow::on_setybutton_clicked()
         QStandardItem *Item = _model->item(0, i);
         if (Item->checkState() == Qt::Checked)
         {
-           tempvec.push_back(i);
+           tempvec.push_back(i - 1);
            Item->setCheckState(Qt::Unchecked);
         }
     }
@@ -364,11 +364,30 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
     int size1 = summary.size();
     for (int i = 0; i < size1; i++){
         int size2 = summary[i].size();
-        std::cout << size2;
-//        for (int j = 0; j < size2; j++){
-//                QString str = QString::fromStdString(summary[i][j]);
-//                this->textBrowser->append(str);
+        int maxlen = 0;
+//        for (int j = 0; j < size2; j++)
+//        {
+//            int templen;
+//            templen = summary[i][j].size();
+//            if (maxlen < templen) maxlen = templen;
 //        }
+        std::string str;
+//        for (int j = 0; j < size2; j++)
+//        {
+//            std::string tempstr;
+//            int len = summary[i][j].size();
+//            tempstr = summary[i][j];
+//            for (int k = 0; k < maxlen - len - 5; k++){
+//                tempstr += " ";
+//            }
+//            str += tempstr + " ";
+//        }
+        for (int j = 0; j < size2; j++){
+            str += summary[i][j] + "\t";
+        }
+
+        QString qstr = QString::fromStdString(str);
+        this->textBrowser->append(qstr);
     }
 
 }
