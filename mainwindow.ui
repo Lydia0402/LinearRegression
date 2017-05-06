@@ -264,16 +264,6 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QListView" name="summaryList">
-    <property name="geometry">
-     <rect>
-      <x>430</x>
-      <y>130</y>
-      <width>621</width>
-      <height>581</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QPushButton" name="residualbutton">
     <property name="geometry">
      <rect>
@@ -285,6 +275,16 @@
     </property>
     <property name="text">
      <string>Residual Analysis</string>
+    </property>
+   </widget>
+   <widget class="QTextBrowser" name="textBrowser">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>130</y>
+      <width>621</width>
+      <height>571</height>
+     </rect>
     </property>
    </widget>
   </widget>

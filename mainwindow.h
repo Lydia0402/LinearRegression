@@ -12,6 +12,7 @@ class QLabel;
 //class MainWindow;
 //}
 
+
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
     Q_OBJECT
@@ -20,6 +21,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void putdata();
+    void putsummary(std::vector<std::vector<std::string>> summary, std::vector<std::string> text);
 
 
 
@@ -42,9 +44,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    bool isdouble(std::string);
 
-    double significance_num;
-    double t_num;
+    double significance_num = 0.05;
+    double t_num = 2;
     std::vector<int> dataX;
     int dataY;
 

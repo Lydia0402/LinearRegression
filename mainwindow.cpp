@@ -5,8 +5,11 @@
 #include <QObject>
 #include "QStandardItem"
 #include <QMessageBox>
+#include <QStringList>
+#include <QStringListModel>
 #include <iostream>
 #include <vector>
+#include <sstream>
 #include "csvreader.h"
 #include "lsregression.h"
 
@@ -263,10 +266,37 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
 }
 
 
+bool MainWindow::isdouble(std::string s)
+{
+        std::stringstream sin(s);
+        double t;
+        char p;
+        if (!(sin >> t))
+        {
+            return false;
+        }
+        if (sin >> p){
+            return false;
+        }
+        else
+        {
+             return true;
+        }
+}
+
+
 void MainWindow::on_execButton_clicked()
 {
     if (methodtype == 1){
         LSregression lsregression(csvreader);
+        lsregression.set(dataX, dataY);
+        lsregression.setSignificance(significance_num);
+        lsregression.solve();
+        std::vector<std::vector<std::string>> summary;
+        std::vector<std::string> text;
+        lsregression.printSummary(summary, text);
+        putsummary(summary, text);
+
     }
 }
 
@@ -280,9 +310,62 @@ void MainWindow::on_cookmeasure_clicked()
 void MainWindow::on_setSbutton_clicked()
 {
     std::string s = this->significanceedit->text().toStdString();
+    if (isdouble(s))
+    {
+        std::stringstream ss(s);
+        double temp;
+        ss >> temp;
+        if (temp < 0 || temp > 1)
+        {
+            QMessageBox::warning(this,tr("Warning"),("Please input a number in (0, 1)."), QMessageBox::Yes);
+        }
+        else
+        {
+            ss >> significance_num;
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this,tr("Warning"),("Please input a number."), QMessageBox::Yes);
+    }
+    this->significanceedit->clear();
+
 }
 
 void MainWindow::on_setTbutton_clicked()
 {
     std::string s = this->huberedit->text().toStdString();
+    if (isdouble(s))
+    {
+        std::stringstream ss(s);
+        double temp;
+        ss >> temp;
+        if (temp < 0)
+        {
+            QMessageBox::warning(this,tr("Warning"),("Please input a number greater than 0."), QMessageBox::Yes);
+        }
+        else
+        {
+            ss >> t_num;
+        }
+
+    }
+    else
+    {
+        QMessageBox::warning(this,tr("Warning"),("Please input a number."), QMessageBox::Yes);
+    }
+    this->significanceedit->clear();
+
+}
+
+void MainWindow::putsummary(std::vector<std::vector<std::string>> summary, std::vector<std::string> text)
+{
+
+    for (int i = 0; i < summary.size(); i++){
+        for (int j = 0; j < summary[i].size(); j++){
+                QString str = QString::fromStdString(summary[i][j]);
+                this->textBrowser->append(str);
+        }
+    }
+
 }
