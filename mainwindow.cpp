@@ -364,25 +364,11 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
     int size1 = summary.size();
     for (int i = 0; i < size1; i++){
         int size2 = summary[i].size();
-        int maxlen = 0;
-//        for (int j = 0; j < size2; j++)
-//        {
-//            int templen;
-//            templen = summary[i][j].size();
-//            if (maxlen < templen) maxlen = templen;
-//        }
+
         std::string str;
-//        for (int j = 0; j < size2; j++)
-//        {
-//            std::string tempstr;
-//            int len = summary[i][j].size();
-//            tempstr = summary[i][j];
-//            for (int k = 0; k < maxlen - len - 5; k++){
-//                tempstr += " ";
-//            }
-//            str += tempstr + " ";
-//        }
-        for (int j = 0; j < size2; j++){
+
+        for (int j = 0; j < size2; j++)
+        {
             str += summary[i][j] + "\t";
         }
 
