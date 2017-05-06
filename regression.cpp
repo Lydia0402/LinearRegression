@@ -145,7 +145,7 @@ void regression::printSummary(std::vector<std::vector<std::string>> & summary,
     arma::mat C = inv(X.t() * X);
     std::vector<std::string> firstline= {"name", "prediction", "t-statistic", "p-value", "Acceptance of null hypothesis"};
     summary.push_back(firstline);
-    studentT::studentT T;
+    studentT T;
     T.set(n-k-1);
     int size = betaHat.size();
     for (int i =0; i< size; i++) {
@@ -160,11 +160,12 @@ void regression::printSummary(std::vector<std::vector<std::string>> & summary,
         char buf2[8];
         sprintf(buf2,"%.2f",t);
         line.push_back(buf2);
-        double pValue = T.pValue(std::abs(t));
+        double pValue = T.pValue(t);
         char buf3[8];
         sprintf(buf3,"%.2f",pValue);
         line.push_back(buf3);
-        if (pValue >= significanceLevel) line.push_back("Reject");
+        if (pValue >= significanceLevel) {
+            line.push_back("Reject");}
         else line.push_back("Accept");
         summary.push_back(line);
     }

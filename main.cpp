@@ -22,6 +22,12 @@
 
 
 int main(int argc, char *argv[]){
+//    studentT t;
+//    t.set(16);
+//    std::cout<<t.pdf(1)<<"mewo\n"<<t.pValue(2.85);
+//    Fisher f;
+//    f.set(1,17);
+//    std::cout<<f.pValue(2);
 //    csvReader a;
 //    if (!a.readData("/Users/alan/Code/CPP_regression_project/LinearRegression-Lydia/res/data3.csv",true)) std::cout <<a.getWarning();
 //    for (std::string b: a.getTitleList() ) {

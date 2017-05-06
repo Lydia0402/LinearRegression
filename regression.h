@@ -20,7 +20,7 @@ public:
     bool set(std::vector<int> listOfSelected,int y);
 
     // Set the significance level, return true if successfully
-    bool setSignificance(double significanceLevel);
+    bool setSignificance(double significanceLevel = 0.05);
 
     // solve method will be implemented in subclasses
     virtual bool solve() = 0;

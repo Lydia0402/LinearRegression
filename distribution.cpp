@@ -21,18 +21,22 @@ void studentT::set(int v){
 }
 
 double studentT::pdf (double x) {
-    double pdf = tgamma((v + 1) / 2) * pow((1 + pow(x, 2) / v), -(v + 1) / 2)
-                 / (sqrt(v * 3.1415926) * tgamma(v / 2));
+    double pdf = 1/sqrt(v*M_PI);
+    pdf = pdf * tgamma(v*0.5+0.5) / tgamma(v*0.5);
+    pdf = pdf * pow((1+x*x/v), -0.5*v-0.5);
     return pdf;
 }
 
 double studentT::integration (double lower, double upper) {
-    int parts = 50;
-    double x[parts + 1], y[parts + 1];
+    int parts = 100;
+    std::vector<double> x,y;
     double length = (upper - lower) / parts;
-    for (int i = 0; i < parts + 1; i++) {
-        x[i] = lower + i * length;
-        y[i] = studentT::pdf(x[i]);
+    x.push_back(0);
+    double y0 = studentT::pdf(0);
+    y.push_back(y0);
+    for (int i = 1; i < parts + 1; i++) {
+        x.push_back(lower + i * length);
+        y.push_back(studentT::pdf(x[i]));
     }
     double sum = 0;
     for (int j = 1; j < parts; j += 2){
@@ -41,14 +45,21 @@ double studentT::integration (double lower, double upper) {
     for (int j = 2; j < parts - 1; j += 2) {
         sum = sum + 2 * y[j];
     }
-    double integration = (y[0] + y[parts] + sum) * length / 3;
+    double integration = (y0 + y[parts] + sum) * length / 3;
     return integration;
 }
 
 double studentT::pValue (double x){
-    double pValue = integration(0, x);
-    pValue = 1 - pValue * 2;
-    return pValue;
+    if (x>0) {
+        double p = studentT::integration(0, x);
+        double pValue = 1 - p * 2;
+        return pValue;
+        }
+    else {
+        double p = studentT::integration(x,0);
+        double pValue = 1 - p * 2;
+        return pValue;
+    }
 }
 
 void Fisher::set(int v1, int v2) {
@@ -86,6 +97,6 @@ double Fisher::integration (double lower, double upper) {
     for (int j = 2; j < parts - 1; j += 2) {
         sum = sum + 2 * y[j];
     }
-    double integration = (y[0] + y[parts] + sum) * length / 3;
+    double integration = (y0 + y[parts] + sum) * length / 3;
     return integration;
 }
