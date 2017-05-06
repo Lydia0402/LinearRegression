@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "graphdialog.h"
+#include "ui_graphdialog.h"
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QObject>
@@ -287,7 +289,11 @@ bool MainWindow::isdouble(std::string s)
 
 void MainWindow::on_execButton_clicked()
 {
-    if (methodtype == 1){
+    cookmeasure->setCheckable(true);
+    residualbutton->setEnabled(true);
+    this->datatable->setVisible(false);
+    if (methodtype == 1)
+    {
         LSregression lsregression(csvreader);
         lsregression.set(dataX, dataY);
         lsregression.setSignificance(significance_num);
@@ -296,8 +302,8 @@ void MainWindow::on_execButton_clicked()
         std::vector<std::string> text;
         lsregression.printSummary(summary, text);
         putsummary(summary, text);
-
     }
+
 }
 
 
@@ -375,7 +381,23 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
         QString qstr = QString::fromStdString(str);
         this->textBrowser->append(qstr);
     }
+    this->textBrowser->append(" ");
+    this->textBrowser->append(" ");
+    int size3 = text.size();
+
+    for (int i = 0; i <size3; i++)
+    {
+        std::string textstr;
+        textstr += text[i];
+        QString qstring = QString::fromStdString(textstr);
+        this->textBrowser->append(qstring);
+    }
 
 }
 
 
+void MainWindow::on_residualbutton_clicked()
+{
+    graphdialog d2;
+    d2.exec();
+}

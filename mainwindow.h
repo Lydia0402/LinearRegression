@@ -42,6 +42,8 @@ private slots:
 
     void on_setTbutton_clicked();
 
+    void on_residualbutton_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool isdouble(std::string);
