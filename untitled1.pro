@@ -53,7 +53,8 @@ HEADERS += \
     mainwindow.h \
     regression.h \
     dialog1.h \
-    distribution.h
+    distribution.h \
+    residual.h
 
 DESTDIR = $$PWD
 

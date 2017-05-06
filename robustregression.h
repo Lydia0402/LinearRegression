@@ -15,8 +15,8 @@ public:
 
 private:
     LSregression initial;
-    double t;
-    arma::mat generateW(arma::mat beta, double t);
+    double t = 2;
+    arma::mat generateW(arma::mat beta, double t );
 };
 
 #endif // ROBUSTREGRESSION_H
