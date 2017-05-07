@@ -57,6 +57,8 @@ public:
     // For drawing pictures, only be used when k = 1!!
     double Ymax();
     double Ymin();
+
+    void shedRows(std::vector<int> rowNumber);
     
     // Series of functions that enable users to get private data
     arma::mat CookMeasure();
@@ -86,8 +88,6 @@ protected:
     std::string warning;
 
     void deepCopy(const regression & src);
-
-    friend class residual;
 };
 
 #endif // REGRESSION_H

@@ -275,6 +275,15 @@ arma::mat regression::CookMeasure(){
     return CookResiduals;
 }
 
+void regression::shedRows(std::vector<int> rowNumber) {
+    std::sort(rowNumber.begin(),rowNumber.end());
+    std::reverse(rowNumber.begin(),rowNumber.end());
+    int size = rowNumber.size();
+    for (int i = 0; i < size; i++) {
+        X.shed_row(rowNumber[i]);
+    }
+}
+
 regression & regression::operator=(const regression & src) {
     if (this != &src) {
         clear();

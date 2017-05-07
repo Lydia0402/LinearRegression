@@ -41,8 +41,11 @@ residualStack<regressionType>::residualStack(regressionType* reg){
 
 template <typename regressionType>
 residualStack<regressionType>::~residualStack(){
-    for (regressionType* i: stack) {
-        delete *i;
+    if (count >=1) {
+        int size = stack.size();
+        for (int i = 1; i < size; i++) {
+            delete stack[i];
+        }
     }
     stack.clear();
 }
@@ -53,12 +56,7 @@ template <typename regressionType>
 regressionType* residualStack<regressionType>::push(std::vector<int> rowNumber){
     regressionType* newRegression = new regressionType;
     newRegression = stack[count-1];
-    std::sort(rowNumber.begin(),rowNumber.end());
-    std::reverse(rowNumber.begin(),rowNumber.end());
-    int size = rowNumber.size();
-    for (int i = 0; i < size; i++) {
-        newRegression->X.shed_rows(rowNumber[i]);
-    }
+    newRegression->shedRows(rowNumber);
     newRegression->solve();
     stack.push_back(newRegression);
     count++;
@@ -69,9 +67,10 @@ regressionType* residualStack<regressionType>::push(std::vector<int> rowNumber){
 // Restore the state before last delation
 template <typename regressionType>
 regressionType* residualStack<regressionType>::pop(){
-    if (count == 1) return *stack[0];
+    if (count == 1) return stack[0];
     else {
         regressionType* old = stack[count-1];
+        delete old;
         stack.pop_back();
         count--;
         return old;
