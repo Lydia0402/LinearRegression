@@ -225,8 +225,8 @@ void regression::ResidualAnalysis(bool cook, std::vector<std::vector<std::string
             line.push_back(std::to_string(Rstudent(i)));
             studentT T;
             T.set(n-k-2);
-            if (T.pValue(Rstudent(i)) <= significanceLevel) line.push_back("No");
-            else line.push_back("Yes");
+            if (T.pValue(Rstudent(i)) <= significanceLevel) line.push_back("Yes");
+            else line.push_back("No");
             analysis.push_back(line);
         }
     }
@@ -242,8 +242,8 @@ void regression::ResidualAnalysis(bool cook, std::vector<std::vector<std::string
             line.push_back(std::to_string(CookResiduals(i)));
             Fisher F;
             F.set(k+1,n-k-1);
-            if (F.pValue(CookResiduals(i)) <= significanceLevel) line.push_back("No");
-            else line.push_back("Yes");
+            if (F.pValue(CookResiduals(i)) <= significanceLevel) line.push_back("Yes");
+            else line.push_back("No");
             analysis.push_back(line);
         }
     }
