@@ -51,6 +51,7 @@ private:
 
     bool isdouble(std::string);
     void putResidualsummary(std::vector<std::vector<std::string> > analysis);
+    void plotRegressionLine(double beta0, double beta1);
 
     double significance_num = 0.05;
     double t_num = 2;

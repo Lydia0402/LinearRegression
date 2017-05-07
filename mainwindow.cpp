@@ -331,6 +331,7 @@ void MainWindow::on_execButton_clicked()
     cookmeasure->setCheckable(true);
     residualbutton->setEnabled(true);
 //    this->datatable->setVisible(false);
+    // Simple Least Square
     if (methodtype == 1)
     {
         LSregression lsregression(csvreader);
@@ -342,8 +343,18 @@ void MainWindow::on_execButton_clicked()
         lsregression.printSummary(summary, text);
         putsummary(summary, text);
 
-
     }
+
+    // Multiple Least Square
+//    if (methodtype == 2)
+//    {
+
+//    }
+//    // Robust
+//    if (methodtype == 3)
+//    {
+
+//    }
 
 }
 
@@ -441,6 +452,7 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
 
 void MainWindow::on_residualbutton_clicked()
 {
+    // Simple Least Square
     if (methodtype == 1)
     {
 
@@ -449,12 +461,15 @@ void MainWindow::on_residualbutton_clicked()
         lsregression.set(dataX, dataY);
         lsregression.setSignificance(significance_num);
         lsregression.solve();
+        arma::mat linedata = lsregression.getbetaHat();
+        double data0 = linedata(0);
+        double data1 = linedata(1);
         // New Summary
         std::vector<std::vector<std::string> > analysis;
         lsregression.ResidualAnalysis(iscookmeasure, analysis);
         putResidualsummary(analysis);
 
-        // Plot
+        // Plot scatter points
         QVector<double> x(csvreader.getNRows()), y(csvreader.getNRows());
 
         int col_x = dataX[0];
@@ -466,20 +481,31 @@ void MainWindow::on_residualbutton_clicked()
         }
         this->graph->xAxis->setLabel("X");
         this->graph->yAxis->setLabel("Y");
-
-        this->graph->xAxis->setRange(lsregression.Xmin() - 50, lsregression.Xmax() + 50);
-        this->graph->yAxis->setRange(lsregression.Ymin() - 100, lsregression.Ymax() + 100);
+        double Xrange = lsregression.Xmax() - lsregression.Xmin();
+        double Yrange = lsregression.Ymax() - lsregression.Ymin();
+        this->graph->xAxis->setRange(lsregression.Xmin() - Xrange * 0.2, lsregression.Xmax() + Xrange * 0.2);
+        this->graph->yAxis->setRange(lsregression.Ymin() - Yrange * 0.2, lsregression.Ymax() + Yrange * 0.2);
         this->graph->addGraph();
         this->graph->graph(0)->setPen(QColor(50, 50, 50, 255));
         this->graph->graph(0)->setLineStyle(QCPGraph::lsNone);
         this->graph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
         this->graph->graph(0)->setData(x, y);
-        this->graph->replot();
+//        this->graph->replot();
         this->tabWidget->setCurrentIndex(1);
 
-//        this->tab2->setEnabled(true);
+        // Plot line
+        plotRegressionLine(data0, data1);
 
     }
+
+    // Multiple Least Square
+//    if (methodtype == 2)
+//    {
+
+//    }
+
+    // Robust
+
 }
 
 void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > analysis)
@@ -506,11 +532,8 @@ void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > analy
         for (int j = 1; j < col_size + 1; j++)
         {
             QString str = QString::fromStdString(analysis[i][j - 1]);
-//            QStandardItem *item = new QStandardItem((str));
             QModelIndex index = model->index(i, j, QModelIndex());
-
             model->setData(index, str);
-//            model->setItem(i, j, item);
         }
     }
 
@@ -531,11 +554,27 @@ void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > analy
 
     // Set the table become no edit mode. (Ban users from editing the table)
     this->residualtable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     // Show
-//    this->tabWidget->setCurrentIndex(0);
     this->residualtable->show();
 
     /* Connect itemchanged signal to slots.
     *This will listen to the checkbox in table.*/
+
 }
 
+
+void MainWindow::plotRegressionLine(double beta0, double beta1)
+{
+    QVector<double> x2(200), y2(200);
+
+    for (int i = 0; i < 200; i++)
+    {
+        x2[i] = i - 50;
+        y2[i] = beta1 * x2[i] + beta0;
+    }
+    this->graph->addGraph();
+    this->graph->graph(1)->setData(x2, y2);
+    this->graph->replot();
+
+}
