@@ -113,7 +113,10 @@ void MainWindow::col_select_test()
 
 void MainWindow::row_select_test()
 {
-   deletebutton->setEnabled(true);
+   if (dataX.size() == 1)
+   {
+       deletebutton->setEnabled(true);
+   }
 }
 
 
@@ -121,6 +124,7 @@ void MainWindow::on_setxbutton_clicked()
 {
     isXset = true;
     dataX.clear();
+    bool nomistake = true;
 
     QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
 
@@ -150,22 +154,34 @@ void MainWindow::on_setxbutton_clicked()
         }
     }
 
+    // for simple
     if (methodtype == 1 && dataX.size() != 1)
     {
         QMessageBox::warning(this,tr("Warning"),("Please select only one X for simple linear regression."), QMessageBox::Yes);
+        nomistake = false;
+    }
+    if (methodtype == 2 && dataX.size() == 1)
+    {
+        QMessageBox::warning(this,tr("Warning"),("Please use simple least square regression if only one X."), QMessageBox::Yes);
+        nomistake = false;
     }
 
+
     // Background change.
-    int datasize = dataX.size();
-    for (int i = 0; i < datasize; i++)
+    if (nomistake)
     {
-        int colnum = dataX[i];
-        for (int j = 1; j < csvreader.getNRows() + 1; j++)
+        int datasize = dataX.size();
+        for (int i = 0; i < datasize; i++)
         {
-            QStandardItem *item = _model->item(j, colnum + 1);
-            item->setForeground(QBrush(QColor(0, 0, 255)));
+            int colnum = dataX[i];
+            for (int j = 1; j < csvreader.getNRows() + 1; j++)
+            {
+                QStandardItem *item = _model->item(j, colnum + 1);
+                item->setForeground(QBrush(QColor(0, 0, 255)));
+            }
         }
     }
+
 
 }
 
@@ -345,16 +361,31 @@ void MainWindow::on_execButton_clicked()
 
     }
 
-    // Multiple Least Square
-//    if (methodtype == 2)
-//    {
-
-//    }
-//    // Robust
-//    if (methodtype == 3)
-//    {
-
-//    }
+//     Multiple Least Square
+    if (methodtype == 2)
+    {
+        LSregression multiregression(csvreader);
+        multiregression.set(dataX, dataY);
+        multiregression.setSignificance(significance_num);
+        multiregression.solve();
+        std::vector<std::vector<std::string>> multisummary;
+        std::vector<std::string> multitext;
+        multiregression.printSummary(multisummary, multitext);
+        putsummary(multisummary, multitext);
+    }
+    // Robust
+    if (methodtype == 3)
+    {
+        LSregression robregre(csvreader);
+        robustregression robregression(robregre);
+        robregression.set(dataX, dataY);
+        robregression.setSignificance(significance_num);
+        robregression.solve();
+        std::vector<std::vector<std::string>> robsummary;
+        std::vector<std::string> robtext;
+        robregression.printSummary(robsummary, robtext);
+        putsummary(robsummary, robtext);
+    }
 
 }
 
@@ -450,6 +481,85 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
 }
 
 
+void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > & analysis)
+{
+    this->datatable->setVisible(false);
+    this->residualtable->setVisible(true);
+    this->residualtable->clearSpans();
+
+    outlierIndex.clear();
+    nonOutlier.clear();
+
+    QStandardItemModel *model;
+    residualRow = analysis.size();
+    residualCol = analysis[0].size();
+    model = new QStandardItemModel(residualRow, residualCol + 1);
+    this->residualtable->setModel(model);
+
+    // Set header (title) for the data table.
+    model->setHeaderData(0, Qt::Horizontal, (" "));
+    for (int i = 1; i < residualCol + 1; i++)
+    {
+        QString str = QString::fromStdString(analysis[0][i]);
+        model->setHeaderData(i, Qt::Horizontal, (str));
+    }
+
+    // Set data for each cell in data table.
+    for (int i = 0; i < residualRow; i++)
+    {
+        // Outlier Judge
+        if (analysis[i][residualCol - 1] == std::string("Yes"))
+        {
+            outlierIndex.push_back(i - 1);
+        }
+        else if (analysis[i][residualCol - 1] == std::string("No"))
+        {
+            nonOutlier.push_back(i - 1);
+        }
+
+        for (int j = 1; j < residualCol + 1; j++)
+        {
+            QString str = QString::fromStdString(analysis[i][j - 1]);
+            QModelIndex index = model->index(i, j, QModelIndex());
+            model->setData(index, str);
+        }
+    }
+
+    // Set ckeckbox.
+    for (int i = 1; i < residualRow ; i++)
+    {
+        QStandardItem *Item = new QStandardItem();
+        if (dataX.size() == 1)
+        {
+            Item->setCheckable(true);
+        }
+        else
+        {
+            Item->setCheckable(false);
+        }
+        Item->setCheckState(Qt::Unchecked);
+        model->setItem(i, 0, Item);
+    }
+
+    QHeaderView* headerView = this->residualtable->verticalHeader();
+    headerView->setHidden(true);
+
+    // Resize
+    this->residualtable->resizeColumnsToContents();
+
+    // Set the table become no edit mode. (Ban users from editing the table)
+    this->residualtable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // Show
+    this->residualtable->show();
+
+    /* Connect itemchanged signal to slots.
+    *This will listen to the checkbox in table.*/
+    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(row_select_test()));
+
+}
+
+
 void MainWindow::on_residualbutton_clicked()
 {
     this->graph->clearGraphs();
@@ -465,6 +575,7 @@ void MainWindow::on_residualbutton_clicked()
         arma::mat linedata = lsregression.getbetaHat();
         double data0 = linedata(0);
         double data1 = linedata(1);
+
         // New Summary
         std::vector<std::vector<std::string> > analysis;
         lsregression.ResidualAnalysis(iscookmeasure, analysis);
@@ -481,12 +592,50 @@ void MainWindow::on_residualbutton_clicked()
     }
 
     // Multiple Least Square
-//    if (methodtype == 2)
-//    {
+    if (methodtype == 2)
+    {
+        LSregression multiregression(csvreader);
+        multiregression.set(dataX, dataY);
+        multiregression.setSignificance(significance_num);
+        multiregression.solve();
 
-//    }
+        // New summary
+        std::vector<std::vector<std::string> > multianalysis;
+        multiregression.ResidualAnalysis(iscookmeasure, multianalysis);
+        putResidualsummary(multianalysis);
+
+    }
 
     // Robust
+    if (methodtype == 3)
+    {
+        LSregression robustls(csvreader);
+        robustregression robregression(robustls);
+        robregression.set(dataX, dataY);
+        robregression.setSignificance(significance_num);
+        robregression.setT(t_num);
+        robregression.solve();
+
+        // New summary
+        std::vector<std::vector<std::string> > robanalysis;
+        robregression.ResidualAnalysis(iscookmeasure, robanalysis);
+        putResidualsummary(robanalysis);
+
+        // Check if it can plot
+        if (dataX.size() == 1)
+        {
+            // Plot scatter points
+            arma::mat robX = robregression.getX();
+            arma::mat robY = robregression.getY();
+            plotScatter(robX, robY, robregression);
+
+            // Plot line
+            arma::mat robdata = robregression.getbetaHat();
+            double robdata0 = robdata(0);
+            double robdata1 = robdata(1);
+            plotRegressionLine(robdata0, robdata1);
+        }
+    }
 
 }
 
@@ -537,75 +686,52 @@ void MainWindow::plotScatter(arma::mat & X, arma::mat & Y, LSregression lsregres
     this->tabWidget->setCurrentIndex(1);
 }
 
-void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > & analysis)
+
+void MainWindow::plotScatter(arma::mat & X, arma::mat & Y, robustregression lsregression)
 {
-    this->datatable->setVisible(false);
-    this->residualtable->setVisible(true);
-    this->residualtable->clearSpans();
+    int nonOutliersize = nonOutlier.size();
+    int outliersize = outlierIndex.size();
+    QVector<double> x0(nonOutliersize), y0(nonOutliersize);
+    QVector<double> x1(outliersize), y1(outliersize);
 
-    outlierIndex.clear();
-    nonOutlier.clear();
-
-    QStandardItemModel *model;
-    residualRow = analysis.size();
-    residualCol = analysis[0].size();
-    model = new QStandardItemModel(residualRow, residualCol + 1);
-    this->residualtable->setModel(model);
-
-    // Set header (title) for the data table.
-    model->setHeaderData(0, Qt::Horizontal, (" "));
-    for (int i = 1; i < residualCol + 1; i++)
+    // For non-oulier
+    for (int i = 0; i < nonOutliersize; i++)
     {
-        QString str = QString::fromStdString(analysis[0][i]);
-        model->setHeaderData(i, Qt::Horizontal, (str));
+        x0[i] = X(nonOutlier[i], 1);
+        y0[i] = Y(nonOutlier[i]);
     }
 
-    // Set data for each cell in data table.
-    for (int i = 0; i < residualRow; i++)
+    // For outliers
+    for (int i = 0; i < outliersize; i++)
     {
-        // Outlier Judge
-        if (analysis[i][residualCol - 1] == std::string("Yes"))
-        {
-            outlierIndex.push_back(i - 1);
-        }
-        else if (analysis[i][residualCol - 1] == std::string("No"))
-        {
-            nonOutlier.push_back(i - 1);
-        }
-
-        for (int j = 1; j < residualRow + 1; j++)
-        {
-            QString str = QString::fromStdString(analysis[i][j - 1]);
-            QModelIndex index = model->index(i, j, QModelIndex());
-            model->setData(index, str);
-        }
+        x1[i] = X(outlierIndex[i], 1);
+        y1[i] = Y(outlierIndex[i]);
     }
 
-    // Set ckeckbox.
-    for (int i = 1; i < residualRow ; i++)
-    {
-        QStandardItem *Item = new QStandardItem();
-        Item->setCheckable(true);
-        Item->setCheckState(Qt::Unchecked);
-        model->setItem(i, 0, Item);
-    }
+    this->graph->xAxis->setLabel("X");
+    this->graph->yAxis->setLabel("Y");
+    double Xrange = lsregression.Xmax() - lsregression.Xmin();
+    double Yrange = lsregression.Ymax() - lsregression.Ymin();
+    this->graph->xAxis->setRange(lsregression.Xmin() - Xrange * 0.2, lsregression.Xmax() + Xrange * 0.2);
+    this->graph->yAxis->setRange(lsregression.Ymin() - Yrange * 0.2, lsregression.Ymax() + Yrange * 0.2);
 
-    QHeaderView* headerView = this->residualtable->verticalHeader();
-    headerView->setHidden(true);
+    // For non-outlier
+    this->graph->addGraph();
+    this->graph->graph(0)->setPen(QColor(50, 50, 50, 255));
+    this->graph->graph(0)->setLineStyle(QCPGraph::lsNone);
+    this->graph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+    this->graph->graph(0)->setData(x0, y0);
+    this->graph->graph(0)->setName("Non-outlier data points");
 
-    // Resize
-    this->residualtable->resizeColumnsToContents();
+    // For outliers
+    this->graph->addGraph();
+    this->graph->graph(1)->setPen(QColor(255, 0, 0));
+    this->graph->graph(1)->setLineStyle(QCPGraph::lsNone);
+    this->graph->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+    this->graph->graph(1)->setData(x1, y1);
+    this->graph->graph(1)->setName("Potential outliers");
 
-    // Set the table become no edit mode. (Ban users from editing the table)
-    this->residualtable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-    // Show
-    this->residualtable->show();
-
-    /* Connect itemchanged signal to slots.
-    *This will listen to the checkbox in table.*/
-    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(row_select_test()));
-
+    this->tabWidget->setCurrentIndex(1);
 }
 
 

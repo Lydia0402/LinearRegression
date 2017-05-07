@@ -6,6 +6,7 @@
 #include <vector>
 #include "lsregression.h"
 #include "csvreader.h"
+#include "robustregression.h"
 
 class QAction;
 class QLabel;
@@ -61,6 +62,7 @@ private:
     void putResidualsummary(std::vector<std::vector<std::string> > & analysis);
     void plotRegressionLine(double beta0, double beta1);
     void plotScatter(arma::mat & X, arma::mat & Y, LSregression);
+    void plotScatter(arma::mat & X, arma::mat & Y, robustregression);
 
     double significance_num = 0.05;
     double t_num = 2;
