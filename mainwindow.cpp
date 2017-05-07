@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "ui_graphdialog.h"
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QObject>

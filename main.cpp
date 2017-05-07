@@ -26,8 +26,9 @@ int main(int argc, char *argv[]){
 //    t.set(16);
 //    std::cout<<t.pdf(1)<<"mewo\n"<<t.pValue(2.85);
 //    Fisher f;
-//    f.set(1,17);
-//    std::cout<<f.pValue(2);
+//    f.set(1,22);
+
+//    std::cout<<f.pdf(8)<<"a"<<f.pValue(8);
 //    csvReader a;
 //    if (!a.readData("/Users/alan/Code/CPP_regression_project/LinearRegression-Lydia/res/data3.csv",true)) std::cout <<a.getWarning();
 //    for (std::string b: a.getTitleList() ) {
@@ -68,11 +69,11 @@ int main(int argc, char *argv[]){
     }
 
 
-//    return app.exec();
+    return app.exec();
 
 
-//    return 0;
+    return 0;
 
 
-//    }
-}
+    }
+

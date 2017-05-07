@@ -28,7 +28,7 @@ double studentT::pdf (double x) {
 }
 
 double studentT::integration (double lower, double upper) {
-    int parts = 100;
+    int parts = 100000;
     std::vector<double> x,y;
     double length = (upper - lower) / parts;
     x.push_back(0);
@@ -80,7 +80,7 @@ double Fisher::pValue(double x){
 }
 
 double Fisher::integration (double lower, double upper) {
-    int parts = 10000;
+    int parts = 1000000;
     std::vector<double> x,y;
     double length = (upper - lower) / parts;
     x.push_back(0);

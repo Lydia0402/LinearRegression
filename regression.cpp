@@ -82,6 +82,22 @@ csvReader regression::getReader() {
     return reader;
 }
 
+double regression::Xmax() {
+    return X.max();
+}
+
+double regression::Xmin() {
+    return X.min();
+}
+
+double regression::Ymax() {
+    return Y.max();
+}
+
+double regression::Ymin() {
+    return Y.min();
+}
+
 bool regression::set(std::vector<int> listOfSelected,int y) {
     X.clear();
 
@@ -154,17 +170,17 @@ void regression::printSummary(std::vector<std::vector<std::string>> & summary,
         else line.push_back(titles[listOfSelected[i-1]]);
         double prediction = betaHat(i);
         char buf[8];
-        sprintf(buf,"%.2f",prediction);
+        sprintf(buf,"%.3f",prediction);
         line.push_back(buf);
         double t = betaHat(i) / sqrt(MSres*C(i,i));
         char buf2[8];
-        sprintf(buf2,"%.2f",t);
+        sprintf(buf2,"%.3f",t);
         line.push_back(buf2);
         double pValue = T.pValue(t);
-        char buf3[8];
-        sprintf(buf3,"%.2f",pValue);
+        char buf3[10];
+        sprintf(buf3,"%.5f",pValue);
         line.push_back(buf3);
-        if (pValue >= significanceLevel) {
+        if (pValue <= significanceLevel) {
             line.push_back("Reject");}
         else line.push_back("Accept");
         summary.push_back(line);
@@ -209,7 +225,7 @@ void regression::ResidualAnalysis(bool cook, std::vector<std::vector<std::string
             line.push_back(std::to_string(Rstudent(i)));
             studentT T;
             T.set(n-k-2);
-            if (T.pValue(Rstudent(i)) >= significanceLevel) line.push_back("No");
+            if (T.pValue(Rstudent(i)) <= significanceLevel) line.push_back("No");
             else line.push_back("Yes");
             analysis.push_back(line);
         }
@@ -226,7 +242,7 @@ void regression::ResidualAnalysis(bool cook, std::vector<std::vector<std::string
             line.push_back(std::to_string(CookResiduals(i)));
             Fisher F;
             F.set(k+1,n-k-1);
-            if (F.pValue(CookResiduals(i)) >= significanceLevel) line.push_back("No");
+            if (F.pValue(CookResiduals(i)) <= significanceLevel) line.push_back("No");
             else line.push_back("Yes");
             analysis.push_back(line);
         }

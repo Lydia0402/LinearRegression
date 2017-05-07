@@ -46,10 +46,17 @@ public:
     
     /* This function will return you a n*k matrix X */
     arma::mat getX();
-    
+
+    // For drawing pictures, only be used when k = 1!!
+
+    double Xmax();
+    double Xmin();
     /* This function will return you a n*1 matrix Y */
     arma::mat getY();
-    
+
+    // For drawing pictures, only be used when k = 1!!
+    double Ymax();
+    double Ymin();
     
     // Series of functions that enable users to get private data
     arma::mat CookMeasure();
