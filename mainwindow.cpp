@@ -14,9 +14,9 @@
 #include "lsregression.h"
 #include "residual.h"
 
-
 extern csvReader csvreader;
 
+//pri_csvreader = csvreader;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -155,6 +155,10 @@ void MainWindow::on_setxbutton_clicked()
     }
 
     // for simple
+    if (dataX.size() == 0)
+    {
+        QMessageBox::warning(this,tr("Warning"),("Please select at least one colummn."), QMessageBox::Yes);
+    }
     if (methodtype == 1 && dataX.size() != 1)
     {
         QMessageBox::warning(this,tr("Warning"),("Please select only one X for simple linear regression."), QMessageBox::Yes);
@@ -217,7 +221,7 @@ void MainWindow::on_setybutton_clicked()
 
     if (tempvec.size() != 1)
     {
-        QMessageBox::warning(this,tr("Warning"),("Invalid operation, Please select only one Y for regression."), QMessageBox::Yes);
+        QMessageBox::warning(this,tr("Warning"),("Invalid operation, Please select one and only one Y for regression."), QMessageBox::Yes);
     }
     else
     {
@@ -235,9 +239,11 @@ void MainWindow::on_setybutton_clicked()
 
 void MainWindow::on_methodcombobox_activated(const QString &arg1)
 {
-    putdata();
+    this->datatable->setVisible(true);
+    this->residualtable->setVisible(false);
     this->textBrowser->clear();
     this->graph->clearGraphs();
+
     // Background reset.
     QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
     for (int i = 1; i < csvreader.getNRows() + 1; i++)
@@ -249,6 +255,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         }
     }
 
+    // Three method and default text
     if (arg1 == "Please select")
     {
         cookmeasure->setCheckable(false);
@@ -381,10 +388,10 @@ void MainWindow::on_execButton_clicked()
         robregression.set(dataX, dataY);
         robregression.setSignificance(significance_num);
         robregression.solve();
-        std::vector<std::vector<std::string>> robsummary;
-        std::vector<std::string> robtext;
-        robregression.printSummary(robsummary, robtext);
-        putsummary(robsummary, robtext);
+//        std::vector<std::vector<std::string>> robsummary;
+//        std::vector<std::string> robtext;
+//        robregression.printSummary(robsummary, robtext);
+//        putsummary(robsummary, robtext);
     }
 
 }
@@ -771,11 +778,11 @@ void MainWindow::on_deletebutton_clicked()
     }
 
     // Regression stack operation
-    LSregression lsregression(csvreader);
-    lsregression.set(dataX, dataY);
-    lsregression.setSignificance(significance_num);
-    lsregression.solve();
-    residualStack<LSregression> stack(& lsregression);
+    LSregression regression(csvreader);
+    regression.set(dataX, dataY);
+    regression.setSignificance(significance_num);
+    regression.solve();
+    residualStack<LSregression> stack(& regression);
     LSregression *newregression = stack.push(deleterow);
 
     // Change summary
@@ -790,19 +797,20 @@ void MainWindow::on_deletebutton_clicked()
     putResidualsummary(analysis);
 
     // Draw graph
+    // Draw scatter
     this->graph->clearGraphs();
     arma::mat X = newregression->getX();
     arma::mat Y = newregression->getY();
     plotScatter(X, Y, *newregression);
+    // Draw line
     arma::mat linedata = newregression->getbetaHat();
     double data0 = linedata(0);
     double data1 = linedata(1);
     plotRegressionLine(data0, data1);
 
-
 }
 
 void MainWindow::on_restorebutton_clicked()
 {
-    //
+//
 }

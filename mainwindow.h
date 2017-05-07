@@ -56,24 +56,34 @@ private slots:
     void on_restorebutton_clicked();
 
 private:
+
+//    csvReader pri_csvreader();
+
     Ui::MainWindow *ui;
 //    csvReader csvreader();
     bool isdouble(std::string);
+
     void putResidualsummary(std::vector<std::vector<std::string> > & analysis);
+
     void plotRegressionLine(double beta0, double beta1);
+
     void plotScatter(arma::mat & X, arma::mat & Y, LSregression);
+
     void plotScatter(arma::mat & X, arma::mat & Y, robustregression);
 
     double significance_num = 0.05;
     double t_num = 2;
 
-    std::vector<int> dataX;
     int dataY;
+    std::vector<int> dataX;
+
     std::vector<int> outlierIndex;
     std::vector<int> nonOutlier;
+
     std::vector<int> deleterow;
 
     int methodtype = 0;
+
     bool methodActivated = false;
     bool col_set = false;
     bool isrobust = false;
