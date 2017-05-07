@@ -12,6 +12,7 @@
 #include <sstream>
 #include "csvreader.h"
 #include "lsregression.h"
+#include "residual.h"
 
 
 extern csvReader csvreader;
@@ -107,14 +108,12 @@ void MainWindow::col_select_test()
 
     }
     else col_set = true;
+}
 
-//    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
-//    for (int i = 1; i < csvreader.getNCols() + 1; i++){
-//        QStandardItem *Item = _model->item(0, i);
-//        if(Item->checkState() == Qt::Checked){
-//            std::cout << "Yeah";
-//        }
-//    }
+
+void MainWindow::row_select_test()
+{
+   deletebutton->setEnabled(true);
 }
 
 
@@ -222,6 +221,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
 {
     putdata();
     this->textBrowser->clear();
+    this->graph->clearGraphs();
     // Background reset.
     QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
     for (int i = 1; i < csvreader.getNRows() + 1; i++)
@@ -452,11 +452,12 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
 
 void MainWindow::on_residualbutton_clicked()
 {
+    this->graph->clearGraphs();
+    residualbutton->setEnabled(false);
+
     // Simple Least Square
     if (methodtype == 1)
     {
-
-        arma::mat originmat = csvreader.getDataMatrix();
         LSregression lsregression(csvreader);
         lsregression.set(dataX, dataY);
         lsregression.setSignificance(significance_num);
@@ -470,28 +471,9 @@ void MainWindow::on_residualbutton_clicked()
         putResidualsummary(analysis);
 
         // Plot scatter points
-        QVector<double> x(csvreader.getNRows()), y(csvreader.getNRows());
-
-        int col_x = dataX[0];
-        int col_y = dataY;
-        for (int i = 0; i < csvreader.getNRows(); i++)
-        {
-            x[i] = originmat(i, col_x);
-            y[i] = originmat(i, col_y);
-        }
-        this->graph->xAxis->setLabel("X");
-        this->graph->yAxis->setLabel("Y");
-        double Xrange = lsregression.Xmax() - lsregression.Xmin();
-        double Yrange = lsregression.Ymax() - lsregression.Ymin();
-        this->graph->xAxis->setRange(lsregression.Xmin() - Xrange * 0.2, lsregression.Xmax() + Xrange * 0.2);
-        this->graph->yAxis->setRange(lsregression.Ymin() - Yrange * 0.2, lsregression.Ymax() + Yrange * 0.2);
-        this->graph->addGraph();
-        this->graph->graph(0)->setPen(QColor(50, 50, 50, 255));
-        this->graph->graph(0)->setLineStyle(QCPGraph::lsNone);
-        this->graph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
-        this->graph->graph(0)->setData(x, y);
-//        this->graph->replot();
-        this->tabWidget->setCurrentIndex(1);
+        arma::mat X = lsregression.getX();
+        arma::mat Y = lsregression.getY();
+        plotScatter(X, Y, lsregression);
 
         // Plot line
         plotRegressionLine(data0, data1);
@@ -508,28 +490,90 @@ void MainWindow::on_residualbutton_clicked()
 
 }
 
-void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > analysis)
+void MainWindow::plotScatter(arma::mat & X, arma::mat & Y, LSregression lsregression)
+{
+    int nonOutliersize = nonOutlier.size();
+    int outliersize = outlierIndex.size();
+    QVector<double> x0(nonOutliersize), y0(nonOutliersize);
+    QVector<double> x1(outliersize), y1(outliersize);
+
+    // For non-oulier
+    for (int i = 0; i < nonOutliersize; i++)
+    {
+        x0[i] = X(nonOutlier[i], 1);
+        y0[i] = Y(nonOutlier[i]);
+    }
+
+    // For outliers
+    for (int i = 0; i < outliersize; i++)
+    {
+        x1[i] = X(outlierIndex[i], 1);
+        y1[i] = Y(outlierIndex[i]);
+    }
+
+    this->graph->xAxis->setLabel("X");
+    this->graph->yAxis->setLabel("Y");
+    double Xrange = lsregression.Xmax() - lsregression.Xmin();
+    double Yrange = lsregression.Ymax() - lsregression.Ymin();
+    this->graph->xAxis->setRange(lsregression.Xmin() - Xrange * 0.2, lsregression.Xmax() + Xrange * 0.2);
+    this->graph->yAxis->setRange(lsregression.Ymin() - Yrange * 0.2, lsregression.Ymax() + Yrange * 0.2);
+
+    // For non-outlier
+    this->graph->addGraph();
+    this->graph->graph(0)->setPen(QColor(50, 50, 50, 255));
+    this->graph->graph(0)->setLineStyle(QCPGraph::lsNone);
+    this->graph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+    this->graph->graph(0)->setData(x0, y0);
+    this->graph->graph(0)->setName("Non-outlier data points");
+
+    // For outliers
+    this->graph->addGraph();
+    this->graph->graph(1)->setPen(QColor(255, 0, 0));
+    this->graph->graph(1)->setLineStyle(QCPGraph::lsNone);
+    this->graph->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+    this->graph->graph(1)->setData(x1, y1);
+    this->graph->graph(1)->setName("Potential outliers");
+
+    this->tabWidget->setCurrentIndex(1);
+}
+
+void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > & analysis)
 {
     this->datatable->setVisible(false);
     this->residualtable->setVisible(true);
+    this->residualtable->clearSpans();
+
+    outlierIndex.clear();
+    nonOutlier.clear();
+
     QStandardItemModel *model;
-    int row_size = analysis.size();
-    int col_size = analysis[0].size();
-    model = new QStandardItemModel(row_size, col_size + 1);
+    residualRow = analysis.size();
+    residualCol = analysis[0].size();
+    model = new QStandardItemModel(residualRow, residualCol + 1);
     this->residualtable->setModel(model);
 
     // Set header (title) for the data table.
     model->setHeaderData(0, Qt::Horizontal, (" "));
-    for (int i = 1; i < col_size + 1; i++)
+    for (int i = 1; i < residualCol + 1; i++)
     {
         QString str = QString::fromStdString(analysis[0][i]);
         model->setHeaderData(i, Qt::Horizontal, (str));
     }
 
     // Set data for each cell in data table.
-    for (int i = 0; i < row_size; i++)
+    for (int i = 0; i < residualRow; i++)
     {
-        for (int j = 1; j < col_size + 1; j++)
+        // Outlier Judge
+        if (analysis[i][residualCol - 1] == std::string("Yes"))
+        {
+            outlierIndex.push_back(i - 1);
+        }
+        else if (analysis[i][residualCol - 1] == std::string("No"))
+        {
+            nonOutlier.push_back(i - 1);
+        }
+
+        for (int j = 1; j < residualRow + 1; j++)
         {
             QString str = QString::fromStdString(analysis[i][j - 1]);
             QModelIndex index = model->index(i, j, QModelIndex());
@@ -538,7 +582,7 @@ void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > analy
     }
 
     // Set ckeckbox.
-    for (int i = 1; i < row_size ; i++)
+    for (int i = 1; i < residualRow ; i++)
     {
         QStandardItem *Item = new QStandardItem();
         Item->setCheckable(true);
@@ -560,6 +604,7 @@ void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > analy
 
     /* Connect itemchanged signal to slots.
     *This will listen to the checkbox in table.*/
+    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(row_select_test()));
 
 }
 
@@ -574,7 +619,64 @@ void MainWindow::plotRegressionLine(double beta0, double beta1)
         y2[i] = beta1 * x2[i] + beta0;
     }
     this->graph->addGraph();
-    this->graph->graph(1)->setData(x2, y2);
+    this->graph->graph(2)->setData(x2, y2);
+    this->graph->graph(2)->setName("Fitted model");
     this->graph->replot();
 
+}
+
+void MainWindow::on_deletebutton_clicked()
+{
+    restorebutton->setEnabled(true);
+    deleterow.clear();
+    this->textBrowser->clear();
+
+    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+
+    // Get the changed checkbox.
+    for (int i = 1; i < residualRow; i++)
+    {
+        QStandardItem *Item = _model->item(i, 0);
+        if (Item->checkState() == Qt::Checked)
+        {
+           deleterow.push_back(i);
+           Item->setCheckState(Qt::Unchecked);
+        }
+    }
+
+    // Regression stack operation
+    LSregression lsregression(csvreader);
+    lsregression.set(dataX, dataY);
+    lsregression.setSignificance(significance_num);
+    lsregression.solve();
+    residualStack<LSregression> stack(& lsregression);
+    LSregression *newregression = stack.push(deleterow);
+
+    // Change summary
+    std::vector<std::vector<std::string>> newsummary;
+    std::vector<std::string> newtext;
+    newregression->printSummary(newsummary, newtext);
+    putsummary(newsummary, newtext);
+
+    // Change table
+    std::vector<std::vector<std::string> > analysis;
+    newregression->ResidualAnalysis(iscookmeasure, analysis);
+    putResidualsummary(analysis);
+
+    // Draw graph
+    this->graph->clearGraphs();
+    arma::mat X = newregression->getX();
+    arma::mat Y = newregression->getY();
+    plotScatter(X, Y, *newregression);
+    arma::mat linedata = newregression->getbetaHat();
+    double data0 = linedata(0);
+    double data1 = linedata(1);
+    plotRegressionLine(data0, data1);
+
+
+}
+
+void MainWindow::on_restorebutton_clicked()
+{
+    //
 }

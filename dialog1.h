@@ -21,6 +21,7 @@ class Dialog1 : public QDialog, Ui::Dialog1
 public:
     explicit Dialog1(QWidget *parent = 0);
 
+
 //    explicit Dialog1(QWidget *parent = 0);
     ~Dialog1();
 
