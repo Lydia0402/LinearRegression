@@ -13,6 +13,7 @@
 #include "csvreader.h"
 #include "lsregression.h"
 
+
 extern csvReader csvreader;
 
 
@@ -39,6 +40,8 @@ void MainWindow::on_exitButton_clicked()
 
 void MainWindow::putdata()
 {
+    this->residualtable->setVisible(false);
+    this->datatable->setVisible(true);
     QStandardItemModel *model;
     model = new QStandardItemModel(csvreader.getNRows() + 1, csvreader.getNCols() + 1);
     this->datatable->setModel(model);
@@ -217,6 +220,8 @@ void MainWindow::on_setybutton_clicked()
 
 void MainWindow::on_methodcombobox_activated(const QString &arg1)
 {
+    putdata();
+    this->textBrowser->clear();
     // Background reset.
     QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
     for (int i = 1; i < csvreader.getNRows() + 1; i++)
@@ -336,6 +341,8 @@ void MainWindow::on_execButton_clicked()
         std::vector<std::string> text;
         lsregression.printSummary(summary, text);
         putsummary(summary, text);
+
+
     }
 
 }
@@ -432,41 +439,103 @@ void MainWindow::putsummary(std::vector<std::vector<std::string> > summary, std:
 }
 
 
-void MainWindow::plotSetData()
-{
-    arma::mat originmat = csvreader.getDataMatrix();
-    QVector<double> x(csvreader.getNRows()), y(csvreader.getNRows());
-
-    int col_x = dataX[0];
-    int col_y = dataY;
-    for (int i = 0; i < csvreader.getNRows(); i++)
-    {
-        x[i] = originmat(i, col_x);
-        y[i] = originmat(i, col_y);
-    }
-    this->graph->xAxis->setLabel("X");
-    this->graph->yAxis->setLabel("Y");
-    this->graph->xAxis->setRange(-50, 100);
-    this->graph->yAxis->setRange(-3000, 10000);
-    this->graph->addGraph();
-    this->graph->graph(0)->setPen(QColor(50, 50, 50, 255));
-    this->graph->graph(0)->setLineStyle(QCPGraph::lsNone);
-    this->graph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
-    this->graph->graph(0)->setData(x, y);
-    this->graph->replot();
-}
-
-
-
 void MainWindow::on_residualbutton_clicked()
 {
     if (methodtype == 1)
     {
-        plotSetData();
+
+        arma::mat originmat = csvreader.getDataMatrix();
+        LSregression lsregression(csvreader);
+        lsregression.set(dataX, dataY);
+        lsregression.setSignificance(significance_num);
+        lsregression.solve();
+        // New Summary
+        std::vector<std::vector<std::string> > analysis;
+        lsregression.ResidualAnalysis(iscookmeasure, analysis);
+        putResidualsummary(analysis);
+
+        // Plot
+        QVector<double> x(csvreader.getNRows()), y(csvreader.getNRows());
+
+        int col_x = dataX[0];
+        int col_y = dataY;
+        for (int i = 0; i < csvreader.getNRows(); i++)
+        {
+            x[i] = originmat(i, col_x);
+            y[i] = originmat(i, col_y);
+        }
+        this->graph->xAxis->setLabel("X");
+        this->graph->yAxis->setLabel("Y");
+
+        this->graph->xAxis->setRange(lsregression.Xmin() - 50, lsregression.Xmax() + 50);
+        this->graph->yAxis->setRange(lsregression.Ymin() - 100, lsregression.Ymax() + 100);
+        this->graph->addGraph();
+        this->graph->graph(0)->setPen(QColor(50, 50, 50, 255));
+        this->graph->graph(0)->setLineStyle(QCPGraph::lsNone);
+        this->graph->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 3));
+        this->graph->graph(0)->setData(x, y);
+        this->graph->replot();
+        this->tabWidget->setCurrentIndex(1);
+
 //        this->tab2->setEnabled(true);
 
     }
 }
 
+void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > analysis)
+{
+    this->datatable->setVisible(false);
+    this->residualtable->setVisible(true);
+    QStandardItemModel *model;
+    int row_size = analysis.size();
+    int col_size = analysis[0].size();
+    model = new QStandardItemModel(row_size, col_size + 1);
+    this->residualtable->setModel(model);
 
+    // Set header (title) for the data table.
+    model->setHeaderData(0, Qt::Horizontal, (" "));
+    for (int i = 1; i < col_size + 1; i++)
+    {
+        QString str = QString::fromStdString(analysis[0][i]);
+        model->setHeaderData(i, Qt::Horizontal, (str));
+    }
+
+    // Set data for each cell in data table.
+    for (int i = 0; i < row_size; i++)
+    {
+        for (int j = 1; j < col_size + 1; j++)
+        {
+            QString str = QString::fromStdString(analysis[i][j - 1]);
+//            QStandardItem *item = new QStandardItem((str));
+            QModelIndex index = model->index(i, j, QModelIndex());
+
+            model->setData(index, str);
+//            model->setItem(i, j, item);
+        }
+    }
+
+    // Set ckeckbox.
+    for (int i = 1; i < row_size ; i++)
+    {
+        QStandardItem *Item = new QStandardItem();
+        Item->setCheckable(true);
+        Item->setCheckState(Qt::Unchecked);
+        model->setItem(i, 0, Item);
+    }
+
+    QHeaderView* headerView = this->residualtable->verticalHeader();
+    headerView->setHidden(true);
+
+    // Resize
+    this->residualtable->resizeColumnsToContents();
+
+    // Set the table become no edit mode. (Ban users from editing the table)
+    this->residualtable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // Show
+//    this->tabWidget->setCurrentIndex(0);
+    this->residualtable->show();
+
+    /* Connect itemchanged signal to slots.
+    *This will listen to the checkbox in table.*/
+}
 

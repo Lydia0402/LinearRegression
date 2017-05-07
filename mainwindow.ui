@@ -338,6 +338,16 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QTableView" name="residualtable">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>40</y>
+      <width>381</width>
+      <height>671</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

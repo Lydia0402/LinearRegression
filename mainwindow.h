@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "ui_mainwindow.h"
 #include <vector>
+#include "lsregression.h"
+#include "csvreader.h"
 
 class QAction;
 class QLabel;
@@ -46,8 +48,9 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
     bool isdouble(std::string);
-    void plotSetData();
+    void putResidualsummary(std::vector<std::vector<std::string> > analysis);
 
     double significance_num = 0.05;
     double t_num = 2;
@@ -61,6 +64,7 @@ private:
     bool isXset = false;
     bool isYset = false;
     bool iscookmeasure = false;
+
 
 //protected:
 //    void closeEvent(QCloseEvent *event);
