@@ -45,7 +45,6 @@ SOURCES += main.cpp \
     regression.cpp \
     dialog1.cpp \
     distribution.cpp \
-    graph.cpp \
     qcustomplot.cpp
 
 HEADERS += \
@@ -57,14 +56,12 @@ HEADERS += \
     dialog1.h \
     distribution.h \
     residual.h \
-    graph.h \
     qcustomplot.h
 
 DESTDIR = $$PWD
 
 FORMS    += mainwindow.ui \
-    dialog1.ui \
-    graph.ui
+    dialog1.ui
 
 DISTFILES += \
     *.csv \

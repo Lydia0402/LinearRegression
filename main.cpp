@@ -60,11 +60,13 @@ int main(int argc, char *argv[]){
     MainWindow main;
     Dialog1 d1;
     d1.show();
-    if (d1.exec() == QDialog::Accepted){
+    if (d1.exec() == QDialog::Accepted)
+    {
         main.show();
         main.putdata();
         return app.exec();
     }
+
 
 //    return app.exec();
 

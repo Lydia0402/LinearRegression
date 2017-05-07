@@ -42,9 +42,12 @@ private slots:
 
     void on_setTbutton_clicked();
 
+    void on_residualbutton_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool isdouble(std::string);
+    void plotSetData();
 
     double significance_num = 0.05;
     double t_num = 2;
