@@ -113,10 +113,7 @@ void MainWindow::col_select_test()
 
 void MainWindow::row_select_test()
 {
-   if (dataX.size() == 1)
-   {
        deletebutton->setEnabled(true);
-   }
 }
 
 
@@ -264,6 +261,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
+        this->graph->clearGraphs();
     }
 
     if (arg1 == "Simple Least Square Regression")
@@ -282,6 +280,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
+        this->graph->clearGraphs();
 
         methodActivated = true;
         if (col_set){
@@ -306,6 +305,8 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
+        this->graph->clearGraphs();
+
         methodActivated = true;
 
         if (col_set){
@@ -331,6 +332,8 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
+        this->graph->clearGraphs();
+
         methodActivated = true;
         isrobust = true;
 
@@ -514,19 +517,19 @@ void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > & ana
     QStandardItemModel *model;
     residualRow = analysis.size();
     residualCol = analysis[0].size();
-    model = new QStandardItemModel(residualRow, residualCol + 1);
+    model = new QStandardItemModel(residualRow - 1, residualCol + 1);
     this->residualtable->setModel(model);
 
     // Set header (title) for the data table.
     model->setHeaderData(0, Qt::Horizontal, (" "));
     for (int i = 1; i < residualCol + 1; i++)
     {
-        QString str = QString::fromStdString(analysis[0][i]);
+        QString str = QString::fromStdString(analysis[0][i - 1]);
         model->setHeaderData(i, Qt::Horizontal, (str));
     }
 
     // Set data for each cell in data table.
-    for (int i = 0; i < residualRow; i++)
+    for (int i = 1; i < residualRow; i++)
     {
         // Outlier Judge
         if (analysis[i][residualCol - 1] == std::string("Yes"))
@@ -541,23 +544,17 @@ void MainWindow::putResidualsummary(std::vector<std::vector<std::string> > & ana
         for (int j = 1; j < residualCol + 1; j++)
         {
             QString str = QString::fromStdString(analysis[i][j - 1]);
-            QModelIndex index = model->index(i, j, QModelIndex());
+            QModelIndex index = model->index(i - 1, j, QModelIndex());
             model->setData(index, str);
         }
     }
 
     // Set ckeckbox.
-    for (int i = 1; i < residualRow ; i++)
+    for (int i = 0; i < residualRow - 1; i++)
     {
         QStandardItem *Item = new QStandardItem();
-        if (dataX.size() == 1)
-        {
-            Item->setCheckable(true);
-        }
-        else
-        {
-            Item->setCheckable(false);
-        }
+
+        Item->setCheckable(true);
         Item->setCheckState(Qt::Unchecked);
         model->setItem(i, 0, Item);
     }
@@ -773,12 +770,12 @@ void MainWindow::on_deletebutton_clicked()
     QStandardItemModel *_model = static_cast <QStandardItemModel*>(this->residualtable->model());
 
     // Get the changed checkbox.
-    for (int i = 1; i < residualRow; i++)
+    for (int i = 0; i < residualRow - 1; i++)
     {
         QStandardItem *Item = _model->item(i, 0);
         if (Item->checkState() == Qt::Checked)
         {
-           deleterow.push_back(i - 1);
+           deleterow.push_back(i);
            Item->setCheckState(Qt::Unchecked);
         }
     }
@@ -793,7 +790,7 @@ void MainWindow::on_deletebutton_clicked()
         this->textBrowser->clear();
     }
 
-    // Regression stack operation for simple
+    // For simple regression
     if (deleterow.size() != 0 && methodtype == 1)
     {
         LSregression *newregression = this->stack_ls.push(deleterow);
@@ -821,24 +818,58 @@ void MainWindow::on_deletebutton_clicked()
         double data1 = linedata(1);
         plotRegressionLine(data0, data1);
     }
+
+    // For multiple regression
     if (deleterow.size() != 0 && methodtype == 2)
     {
         LSregression *newmulti = this->stack_multi.push(deleterow);
 
+        // Change summary
+        std::vector<std::vector<std::string>> newmultisummary;
+        std::vector<std::string> newmultitext;
+        newmulti->printSummary(newmultisummary, newmultitext);
+        putsummary(newmultisummary, newmultitext);
+
+        // Change table
+        std::vector<std::vector<std::string> > analysis;
+        newmulti->ResidualAnalysis(iscookmeasure, analysis);
+        putResidualsummary(analysis);
+
+        this->tabWidget->setCurrentIndex(0);
 
     }
+
+    // For robust regression
     if (deleterow.size() != 0 && methodtype == 3)
     {
         robustregression *newrob = this->stack_rob.push(deleterow);
+
+        // Change summary
+        std::vector<std::vector<std::string>> newrobsummary;
+        std::vector<std::string> newrobtext;
+        newrob->printSummary(newrobsummary, newrobtext);
+//        putsummary(newrobsummary, newrobtext);
+
+        // Change table
+//        std::vector<std::vector<std::string> > analysis;
+//        newrob->ResidualAnalysis(iscookmeasure, analysis);
+//        putResidualsummary(analysis);
+
+        if (dataX.size() == 1)
+        {
+            // Draw graph
+            // Draw scatter
+            this->graph->clearGraphs();
+            arma::mat X = newrob->getX();
+            arma::mat Y = newrob->getY();
+            plotScatter(X, Y, *newrob);
+            // Draw line
+            arma::mat linedata = newrob->getbetaHat();
+            double data0 = linedata(0);
+            double data1 = linedata(1);
+            plotRegressionLine(data0, data1);
+        }
     }
-
-
-
-
-
-
-
-
 }
 
 void MainWindow::on_restorebutton_clicked()
@@ -887,6 +918,20 @@ void MainWindow::on_restorebutton_clicked()
         this->stack_multi.pop();
         LSregression *newmulti = this->stack_multi.peek();
 
+
+        // Change summary
+        std::vector<std::vector<std::string>> newmultisummary;
+        std::vector<std::string> newmultitext;
+        newmulti->printSummary(newmultisummary, newmultitext);
+        putsummary(newmultisummary, newmultitext);
+
+        // Change table
+        std::vector<std::vector<std::string> > analysis;
+        newmulti->ResidualAnalysis(iscookmeasure, analysis);
+        putResidualsummary(analysis);
+
+        this->tabWidget->setCurrentIndex(0);
+
     }
 
     // For robust regression
@@ -894,6 +939,32 @@ void MainWindow::on_restorebutton_clicked()
     {
         this->stack_rob.pop();
         robustregression *newrob = this->stack_rob.peek();
+
+        // Change summary
+        std::vector<std::vector<std::string>> newrobsummary;
+        std::vector<std::string> newrobtext;
+        newrob->printSummary(newrobsummary, newrobtext);
+        putsummary(newrobsummary, newrobtext);
+
+        // Change table
+        std::vector<std::vector<std::string> > analysis;
+        newrob->ResidualAnalysis(iscookmeasure, analysis);
+        putResidualsummary(analysis);
+
+        if (dataX.size() == 1)
+        {
+            // Draw graph
+            // Draw scatter
+            this->graph->clearGraphs();
+            arma::mat X = newrob->getX();
+            arma::mat Y = newrob->getY();
+            plotScatter(X, Y, *newrob);
+            // Draw line
+            arma::mat linedata = newrob->getbetaHat();
+            double data0 = linedata(0);
+            double data1 = linedata(1);
+            plotRegressionLine(data0, data1);
+        }
 
     }
 }
