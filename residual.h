@@ -70,7 +70,7 @@ residualStack<regressionType>::~residualStack(){
 template <typename regressionType>
 regressionType* residualStack<regressionType>::push(std::vector<int> rowNumber){
     regressionType* newRegression = new regressionType;
-    newRegression = stack[count-1];
+    *newRegression = *stack[count-1];
     newRegression->shedRows(rowNumber);
     newRegression->solve();
     stack.push_back(newRegression);

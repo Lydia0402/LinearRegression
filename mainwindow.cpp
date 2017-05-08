@@ -770,7 +770,7 @@ void MainWindow::on_deletebutton_clicked()
 {
     deleterow.clear();
 
-    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->residualtable->model());
+    QStandardItemModel *_model = static_cast <QStandardItemModel*>(this->residualtable->model());
 
     // Get the changed checkbox.
     for (int i = 1; i < residualRow; i++)
@@ -778,7 +778,7 @@ void MainWindow::on_deletebutton_clicked()
         QStandardItem *Item = _model->item(i, 0);
         if (Item->checkState() == Qt::Checked)
         {
-           deleterow.push_back(i);
+           deleterow.push_back(i - 1);
            Item->setCheckState(Qt::Unchecked);
         }
     }
@@ -807,19 +807,19 @@ void MainWindow::on_deletebutton_clicked()
         // Change table
         std::vector<std::vector<std::string> > analysis;
         newregression->ResidualAnalysis(iscookmeasure, analysis);
-//        putResidualsummary(analysis);
+        putResidualsummary(analysis);
 
-//        // Draw graph
-//        // Draw scatter
-//        this->graph->clearGraphs();
-//        arma::mat X = newregression->getX();
-//        arma::mat Y = newregression->getY();
-//        plotScatter(X, Y, *newregression);
-//        // Draw line
-//        arma::mat linedata = newregression->getbetaHat();
-//        double data0 = linedata(0);
-//        double data1 = linedata(1);
-//        plotRegressionLine(data0, data1);
+        // Draw graph
+        // Draw scatter
+        this->graph->clearGraphs();
+        arma::mat X = newregression->getX();
+        arma::mat Y = newregression->getY();
+        plotScatter(X, Y, *newregression);
+        // Draw line
+        arma::mat linedata = newregression->getbetaHat();
+        double data0 = linedata(0);
+        double data1 = linedata(1);
+        plotRegressionLine(data0, data1);
     }
     if (deleterow.size() != 0 && methodtype == 2)
     {
@@ -844,6 +844,7 @@ void MainWindow::on_deletebutton_clicked()
 void MainWindow::on_restorebutton_clicked()
 {
     deletetimes --;
+    deleterow.clear();
     if (deletetimes == 0)
     {
         restorebutton->setEnabled(false);
@@ -854,6 +855,29 @@ void MainWindow::on_restorebutton_clicked()
     {
         this->stack_ls.pop();
         LSregression *newls = this->stack_ls.peek();
+
+        // Change summary
+        std::vector<std::vector<std::string>> newlssummary;
+        std::vector<std::string> newlstext;
+        newls->printSummary(newlssummary, newlstext);
+        putsummary(newlssummary, newlstext);
+
+        // Change table
+        std::vector<std::vector<std::string> > newlsanalysis;
+        newls->ResidualAnalysis(iscookmeasure, newlsanalysis);
+        putResidualsummary(newlsanalysis);
+
+        // Draw graph
+        // Draw scatter
+        this->graph->clearGraphs();
+        arma::mat X = newls->getX();
+        arma::mat Y = newls->getY();
+        plotScatter(X, Y, *newls);
+        // Draw line
+        arma::mat linedata = newls->getbetaHat();
+        double data0 = linedata(0);
+        double data1 = linedata(1);
+        plotRegressionLine(data0, data1);
 
     }
 
