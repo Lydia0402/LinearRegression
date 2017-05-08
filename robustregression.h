@@ -8,6 +8,7 @@
 class robustregression: public regression
 {
 public:
+    robustregression();
     robustregression(csvReader read);
     robustregression(LSregression LSR);
     bool setT(double t);
