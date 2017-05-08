@@ -23,7 +23,9 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
     void putdata();
+
     void putsummary(std::vector<std::vector<std::string>> summary, std::vector<std::string> text);
 
 
