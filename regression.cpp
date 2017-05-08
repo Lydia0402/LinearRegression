@@ -297,6 +297,7 @@ void regression::shedRows(std::vector<int> rowNumber) {
     int size = rowNumber.size();
     for (int i = 0; i < size; i++) {
         X.shed_row(rowNumber[i]);
+        Y.shed_row(rowNumber[i]);
     }
 }
 
