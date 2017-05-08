@@ -7,7 +7,7 @@
 #include "lsregression.h"
 #include "csvreader.h"
 #include "robustregression.h"
-#include
+#include "residual.h"
 
 class QAction;
 class QLabel;
@@ -65,6 +65,9 @@ private:
     LSregression pri_ls_multi;
     LSregression pri_ls_rob;
     robustregression pri_robregression;
+    residualStack<LSregression> stack_ls;
+    residualStack<LSregression> stack_multi;
+    residualStack<robustregression> stack_rob;
     int deletetimes = 0;
 
     Ui::MainWindow *ui;

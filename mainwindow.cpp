@@ -606,6 +606,9 @@ void MainWindow::on_residualbutton_clicked()
         // Plot line
         plotRegressionLine(data0, data1);
 
+        // Stack operation.
+        this->stack_ls.setInitial( & pri_ls_simple);
+
     }
 
     // Multiple Least Square
@@ -616,6 +619,9 @@ void MainWindow::on_residualbutton_clicked()
         std::vector<std::vector<std::string> > multianalysis;
         this->pri_ls_multi.ResidualAnalysis(iscookmeasure, multianalysis);
         putResidualsummary(multianalysis);
+
+        // Stack operation.
+        this->stack_multi.setInitial( & pri_ls_multi);
 
     }
 
@@ -642,6 +648,9 @@ void MainWindow::on_residualbutton_clicked()
             double robdata1 = robdata(1);
             plotRegressionLine(robdata0, robdata1);
         }
+
+        // Stack operation.
+        this->stack_rob.setInitial( & pri_robregression);
     }
 }
 
@@ -759,12 +768,9 @@ void MainWindow::plotRegressionLine(double beta0, double beta1)
 
 void MainWindow::on_deletebutton_clicked()
 {
-    deletetimes ++;
-    restorebutton->setEnabled(true);
     deleterow.clear();
-    this->textBrowser->clear();
 
-    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
+    QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->residualtable->model());
 
     // Get the changed checkbox.
     for (int i = 1; i < residualRow; i++)
@@ -780,40 +786,46 @@ void MainWindow::on_deletebutton_clicked()
     {
         QMessageBox::warning(this,tr("Warning"),("Please select at least one row."), QMessageBox::Yes);
     }
-    // Regression stack operation for simple
-    if (methodtype == 1)
+    else
     {
-        residualStack<LSregression> stack(& regression);
-        LSregression *newregression = stack.push(deleterow);
+        deletetimes ++;
+        restorebutton->setEnabled(true);
+        this->textBrowser->clear();
+    }
+
+    // Regression stack operation for simple
+    if (deleterow.size() != 0 && methodtype == 1)
+    {
+        LSregression *newregression = this->stack_ls.push(deleterow);
 
         // Change summary
         std::vector<std::vector<std::string>> newsummary;
         std::vector<std::string> newtext;
-        newregression->printSummary(newsummary, newtext);
-        putsummary(newsummary, newtext);
+//        newregression->printSummary(newsummary, newtext);
+//        putsummary(newsummary, newtext);
 
-        // Change table
-        std::vector<std::vector<std::string> > analysis;
-        newregression->ResidualAnalysis(iscookmeasure, analysis);
-        putResidualsummary(analysis);
+//        // Change table
+//        std::vector<std::vector<std::string> > analysis;
+//        newregression->ResidualAnalysis(iscookmeasure, analysis);
+//        putResidualsummary(analysis);
 
-        // Draw graph
-        // Draw scatter
-        this->graph->clearGraphs();
-        arma::mat X = newregression->getX();
-        arma::mat Y = newregression->getY();
-        plotScatter(X, Y, *newregression);
-        // Draw line
-        arma::mat linedata = newregression->getbetaHat();
-        double data0 = linedata(0);
-        double data1 = linedata(1);
-        plotRegressionLine(data0, data1);
+//        // Draw graph
+//        // Draw scatter
+//        this->graph->clearGraphs();
+//        arma::mat X = newregression->getX();
+//        arma::mat Y = newregression->getY();
+//        plotScatter(X, Y, *newregression);
+//        // Draw line
+//        arma::mat linedata = newregression->getbetaHat();
+//        double data0 = linedata(0);
+//        double data1 = linedata(1);
+//        plotRegressionLine(data0, data1);
     }
-    if (methodtype == 2)
+    if (deleterow.size() != 0 && methodtype == 2)
     {
 
     }
-    if (methodtype == 3)
+    if (deleterow.size() != 0 && methodtype == 3)
     {
 
     }
@@ -833,5 +845,29 @@ void MainWindow::on_restorebutton_clicked()
     if (deletetimes == 0)
     {
         restorebutton->setEnabled(false);
+    }
+
+    // For simple least square regression
+    if (methodtype == 1)
+    {
+        this->stack_ls.pop();
+        LSregression *newls = this->stack_ls.peek();
+
+    }
+
+    // For multiple least square regression
+    if (methodtype == 2)
+    {
+        this->stack_multi.pop();
+        LSregression *newmulti = this->stack_multi.peek();
+
+    }
+
+    // For robust regression
+    if (methodtype == 3)
+    {
+        this->stack_rob.pop();
+        robustregression *newrob = this->stack_rob.peek();
+
     }
 }

@@ -11,6 +11,10 @@ class residualStack
 {
 public:
     // Constructor   
+    residualStack();
+
+    void setInitial(regressionType *reg);
+
     residualStack(regressionType* reg);
 
     ~residualStack();
@@ -33,6 +37,17 @@ protected:
     
 };
 
+template <typename regressionType>
+residualStack<regressionType>::residualStack(){
+    stack = {};
+    count = 0;
+}
+
+template <typename regressionType>
+void residualStack<regressionType>::setInitial(regressionType* reg){
+    stack = {reg};
+    count = 1;
+}
 template <typename regressionType>
 residualStack<regressionType>::residualStack(regressionType* reg){
     stack = {reg};
