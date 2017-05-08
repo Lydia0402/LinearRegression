@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 {
     pri_csvreader = csvreader;
+
 //    pri_csvreader.readData(pri_csvreader.filePath(), pri_csvreader.hasTitle());
     setupUi(this);
 }
@@ -44,7 +45,6 @@ void MainWindow::putdata()
 {
 //    pri_csvreader.readData(csvreader.filePath(), csvreader.hasTitle());
 
-    pri_ls_simple(pri_csvreader);
     this->residualtable->setVisible(false);
     this->datatable->setVisible(true);
     QStandardItemModel *model;
@@ -273,6 +273,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Simple Least Square Regression")
     {
         methodtype = 1;
+        pri_ls_simple(pri_csvreader);
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
@@ -293,6 +294,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Multiple Least Square Regression")
     {
         methodtype = 2;
+        pri_ls_multi(pri_csvreader);
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
@@ -313,6 +315,8 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Robust Regression")
     {
         methodtype = 3;
+        pri_ls_rob(pri_csvreader);
+        pri_robregression(pri_ls_rob);
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
