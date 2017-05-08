@@ -845,6 +845,7 @@ void MainWindow::on_deletebutton_clicked()
         robustregression *newrob = this->stack_rob.push(deleterow);
 
         // Change summary
+
         std::vector<std::vector<std::string>> newrobsummary;
         std::vector<std::string> newrobtext;
         newrob->printSummary(newrobsummary, newrobtext);
