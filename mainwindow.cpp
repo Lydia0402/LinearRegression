@@ -273,7 +273,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Simple Least Square Regression")
     {
         methodtype = 1;
-        pri_ls_simple(pri_csvreader);
+        pri_ls_simple.setDataSource(pri_csvreader);
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
@@ -294,7 +294,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Multiple Least Square Regression")
     {
         methodtype = 2;
-        pri_ls_multi(pri_csvreader);
+        pri_ls_multi.setDataSource(pri_csvreader);
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
@@ -315,8 +315,8 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Robust Regression")
     {
         methodtype = 3;
-        pri_ls_rob(pri_csvreader);
-        pri_robregression(pri_ls_rob);
+        pri_ls_rob.setDataSource(pri_csvreader);
+        pri_robregression.setDataSource(pri_ls_rob);
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;

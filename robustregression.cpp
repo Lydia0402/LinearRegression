@@ -1,5 +1,9 @@
 #include "robustregression.h"
 
+robustregression::robustregression(){
+
+}
+
 robustregression::robustregression(csvReader read){
     reader = read;
 }
