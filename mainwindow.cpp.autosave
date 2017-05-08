@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 {
     pri_csvreader = csvreader;
+    
 //    pri_csvreader.readData(pri_csvreader.filePath(), pri_csvreader.hasTitle());
     setupUi(this);
 }

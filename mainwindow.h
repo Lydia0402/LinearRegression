@@ -59,10 +59,14 @@ private slots:
 
 private:
 
-//    csvReader pri_csvreader();
+    csvReader pri_csvreader;
+    LSregression pri_ls_simple;
+    LSregression pri_ls_multi;
+    LSregression pri_ls_rob;
+    robustregression pri_robregression;
 
     Ui::MainWindow *ui;
-//    csvReader csvreader();
+
     bool isdouble(std::string);
 
     void putResidualsummary(std::vector<std::vector<std::string> > & analysis);
