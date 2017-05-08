@@ -622,8 +622,8 @@ void MainWindow::on_residualbutton_clicked()
     {
         LSregression robustls(csvreader);
         robustls.set(dataX,dataY);
-//        robustls.setSignificance(significance_num);
-//        robustls.solve();
+        robustls.setSignificance(significance_num);
+        robustls.solve();
 //        robustls.CookMeasure();
 //        robustregression robregression(robustls);
 //        robregression.setT(t_num);

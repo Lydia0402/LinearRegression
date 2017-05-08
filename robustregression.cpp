@@ -5,9 +5,18 @@ robustregression::robustregression(csvReader read){
 }
 
 robustregression::robustregression(LSregression LSR) {
+
     initial = LSR;
     X = LSR.getX();
     Y = LSR.getY();
+    reader = LSR.getReader();
+    listOfSelected = LSR.getlistOfSelected();
+    y = LSR.gety();
+    data = LSR.getData();
+    n = LSR.getN();
+    k = LSR.getK();
+    significanceLevel = LSR.getSignificance();
+    warning = LSR.getWarning();
 }
 
 
@@ -59,7 +68,8 @@ bool robustregression::solve(){
     MSres = SSres / (n- (k + 1));
     RSquare = SSR / SStotal;
     RadjSquare = 1 - (SSres / (n - (k + 1))) / (SStotal / (n - 1));
-
+    CookMeasure();
+    RstudentResidual();
     return true;
 }
 

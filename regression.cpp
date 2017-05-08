@@ -98,6 +98,22 @@ double regression::Ymin() {
     return Y.min();
 }
 
+std::vector<int> regression::getlistOfSelected(){
+    return listOfSelected;
+}
+
+int regression::gety(){
+    return y;
+}
+
+arma::mat regression::getData(){
+    return data;
+}
+
+double regression::getSignificance(){
+    return significanceLevel;
+}
+
 bool regression::set(std::vector<int> listOfSelected,int y) {
     X.clear();
 

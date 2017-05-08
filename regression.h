@@ -67,11 +67,15 @@ public:
     arma::mat getHat();
     arma::mat getYHat();
     arma::mat getResidual();
+    arma::mat getData();
+    double getSignificance();
     csvReader getReader();
     int getN();
     int getK();
     double getRSquare();
-    double getRadjSquare();   
+    double getRadjSquare();
+    std::vector<int> getlistOfSelected();
+    int gety();
     regression & operator=(const regression & src);
     void clear();
 
