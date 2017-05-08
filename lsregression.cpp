@@ -13,6 +13,8 @@ LSregression::LSregression(csvReader read){
 }
 
 bool LSregression::solve(){
+    n = X.n_rows;
+    k = X.n_cols - 1;
     Hat = X*arma::inv(X.t()*X)*X.t();
     betaHat = arma::inv(X.t()*X)*X.t()*Y;
     YHat = X * betaHat;

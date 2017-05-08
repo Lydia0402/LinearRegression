@@ -41,6 +41,9 @@ void robustregression::setLSR(LSregression LSR) {
 
 bool robustregression::solve(){
 
+    n = X.n_rows;
+    k = X.n_cols - 1;
+
     // Use the result got from least square solution as the initial beta
 
     arma::mat beta_0(initial.getbetaHat());
