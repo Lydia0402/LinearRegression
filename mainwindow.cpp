@@ -842,6 +842,9 @@ void MainWindow::on_deletebutton_clicked()
     // For robust regression
     if (deleterow.size() != 0 && methodtype == 3)
     {
+        LSregression* ls = this->stack_rob.peek()->getInitial();
+        ls->shedRows(deleterow);
+        ls->solve();
         robustregression *newrob = this->stack_rob.push(deleterow);
 
         // Change summary

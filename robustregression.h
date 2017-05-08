@@ -14,6 +14,7 @@ public:
     void setLSR(LSregression LSR);
     bool setT(double t);
     bool solve();
+    LSregression* getInitial();
 
 private:
     LSregression initial;
