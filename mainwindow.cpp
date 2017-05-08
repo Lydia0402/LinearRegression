@@ -386,13 +386,15 @@ void MainWindow::on_execButton_clicked()
         LSregression robregre(csvreader);
         robregre.set(dataX, dataY);
         robregre.setSignificance(significance_num);
+        robregre.solve();
+
         robustregression robregression(robregre);
 //        robregression.set(dataX, dataY);
 //        robregression.setSignificance(significance_num);
-//        robregression.solve();
-//        std::vector<std::vector<std::string>> robsummary;
-//        std::vector<std::string> robtext;
-//        robregression.printSummary(robsummary, robtext);
+        robregression.solve();
+        std::vector<std::vector<std::string>> robsummary;
+        std::vector<std::string> robtext;
+        robregression.printSummary(robsummary, robtext);
 //        putsummary(robsummary, robtext);
     }
 
