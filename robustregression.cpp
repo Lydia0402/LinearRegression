@@ -37,6 +37,10 @@ void robustregression::setLSR(LSregression LSR) {
     warning = LSR.getWarning();
 }
 
+LSregression* robustregression::getInitial(){
+    return &initial;
+}
+
 // I use gradient decent to solve robust regression problem.
 
 bool robustregression::solve(){
