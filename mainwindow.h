@@ -67,7 +67,7 @@ private:
     robustregression pri_robregression;
     residualStack<LSregression> stack_ls;
     residualStack<LSregression> stack_multi;
-    residualStack<robustregression> stack_rob;
+    residualStack<LSregression> stack_rob;
     int deletetimes = 0;
 
     Ui::MainWindow *ui;

@@ -647,7 +647,7 @@ void MainWindow::on_residualbutton_clicked()
         }
 
         // Stack operation.
-        this->stack_rob.setInitial( & pri_robregression);
+        this->stack_rob.setInitial( & pri_ls_rob);
     }
 }
 
@@ -842,33 +842,36 @@ void MainWindow::on_deletebutton_clicked()
     // For robust regression
     if (deleterow.size() != 0 && methodtype == 3)
     {
-        LSregression* ls = this->stack_rob.peek()->getInitial();
-        ls->shedRows(deleterow);
+        // Resolve
+        LSregression* ls = this->stack_rob.push(deleterow);
+        ls->setSignificance(significance_num);
         ls->solve();
-        robustregression *newrob = this->stack_rob.push(deleterow);
+        this->pri_robregression.setLSR(*ls);
+        this->pri_robregression.setT(t_num);
+        this->pri_robregression.solve();
 
         // Change summary
 
         std::vector<std::vector<std::string>> newrobsummary;
         std::vector<std::string> newrobtext;
-        newrob->printSummary(newrobsummary, newrobtext);
-//        putsummary(newrobsummary, newrobtext);
+        this->pri_robregression.printSummary(newrobsummary, newrobtext);
+        putsummary(newrobsummary, newrobtext);
 
         // Change table
-//        std::vector<std::vector<std::string> > analysis;
-//        newrob->ResidualAnalysis(iscookmeasure, analysis);
-//        putResidualsummary(analysis);
+        std::vector<std::vector<std::string> > analysis;
+        this->pri_robregression.ResidualAnalysis(iscookmeasure, analysis);
+        putResidualsummary(analysis);
 
         if (dataX.size() == 1)
         {
             // Draw graph
             // Draw scatter
             this->graph->clearGraphs();
-            arma::mat X = newrob->getX();
-            arma::mat Y = newrob->getY();
-            plotScatter(X, Y, *newrob);
+            arma::mat X = this->pri_robregression.getX();
+            arma::mat Y = this->pri_robregression.getY();
+            plotScatter(X, Y, pri_robregression);
             // Draw line
-            arma::mat linedata = newrob->getbetaHat();
+            arma::mat linedata = this->pri_robregression.getbetaHat();
             double data0 = linedata(0);
             double data1 = linedata(1);
             plotRegressionLine(data0, data1);
@@ -942,17 +945,25 @@ void MainWindow::on_restorebutton_clicked()
     if (methodtype == 3)
     {
         this->stack_rob.pop();
-        robustregression *newrob = this->stack_rob.peek();
+        LSregression *newrob = this->stack_rob.peek();
+
+        // Resolve
+        newrob->setSignificance(significance_num);
+        newrob->solve();
+        this->pri_robregression.setLSR(*newrob);
+        this->pri_robregression.setT(t_num);
+        this->pri_robregression.solve();
 
         // Change summary
+
         std::vector<std::vector<std::string>> newrobsummary;
         std::vector<std::string> newrobtext;
-        newrob->printSummary(newrobsummary, newrobtext);
+        this->pri_robregression.printSummary(newrobsummary, newrobtext);
         putsummary(newrobsummary, newrobtext);
 
         // Change table
         std::vector<std::vector<std::string> > analysis;
-        newrob->ResidualAnalysis(iscookmeasure, analysis);
+        this->pri_robregression.ResidualAnalysis(iscookmeasure, analysis);
         putResidualsummary(analysis);
 
         if (dataX.size() == 1)
@@ -960,11 +971,11 @@ void MainWindow::on_restorebutton_clicked()
             // Draw graph
             // Draw scatter
             this->graph->clearGraphs();
-            arma::mat X = newrob->getX();
-            arma::mat Y = newrob->getY();
-            plotScatter(X, Y, *newrob);
+            arma::mat X = this->pri_robregression.getX();
+            arma::mat Y = this->pri_robregression.getY();
+            plotScatter(X, Y, pri_robregression);
             // Draw line
-            arma::mat linedata = newrob->getbetaHat();
+            arma::mat linedata = this->pri_robregression.getbetaHat();
             double data0 = linedata(0);
             double data1 = linedata(1);
             plotRegressionLine(data0, data1);
