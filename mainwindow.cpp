@@ -801,12 +801,12 @@ void MainWindow::on_deletebutton_clicked()
         // Change summary
         std::vector<std::vector<std::string>> newsummary;
         std::vector<std::string> newtext;
-//        newregression->printSummary(newsummary, newtext);
-//        putsummary(newsummary, newtext);
+        newregression->printSummary(newsummary, newtext);
+        putsummary(newsummary, newtext);
 
-//        // Change table
-//        std::vector<std::vector<std::string> > analysis;
-//        newregression->ResidualAnalysis(iscookmeasure, analysis);
+        // Change table
+        std::vector<std::vector<std::string> > analysis;
+        newregression->ResidualAnalysis(iscookmeasure, analysis);
 //        putResidualsummary(analysis);
 
 //        // Draw graph
@@ -823,11 +823,13 @@ void MainWindow::on_deletebutton_clicked()
     }
     if (deleterow.size() != 0 && methodtype == 2)
     {
+        LSregression *newmulti = this->stack_multi.push(deleterow);
+
 
     }
     if (deleterow.size() != 0 && methodtype == 3)
     {
-
+        robustregression *newrob = this->stack_rob.push(deleterow);
     }
 
 
