@@ -37,7 +37,19 @@ public:
 
     int getNCols();
 
+    bool hasTitle();
+
+    std::string filePath();
+
+    csvReader & operator=(const csvReader & src);
+
+    void clear();
 private:
+    void deepCopy(const csvReader & src);
+    std::string address;
+
+    bool hastitle;
+
     arma::mat data; // Used to store the all the data. Size: nRows * nCols
 
     int nRows,nCols; /* nRows is the number of data points (usually denoted as n)

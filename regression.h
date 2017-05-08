@@ -13,7 +13,7 @@ public:
     // Constructor: construct with a csvReader
     regression();
     regression(csvReader read);
-    ~regression();
+    virtual ~regression();
     bool setDataSource(csvReader read);
 
     // Set functions for X and Y, return true if successfully
