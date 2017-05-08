@@ -17,6 +17,7 @@ void csvReader::clearAllInstantVariables() {
     nCols = 0;
     titleList.clear();
     warning.clear();
+    address.clear();
 }
 
 arma::mat csvReader::getDataMatrix(){
@@ -31,7 +32,17 @@ int csvReader::getNRows() {
     return nRows;
 }
 
+bool csvReader::hasTitle() {
+    return hastitle;
+}
+
+std::string csvReader::filePath(){
+    return address;
+}
+
 bool csvReader::readData(std::string filename, bool title) {
+    hastitle = title;
+    address = filename;
     if (tryLineBreak(filename,title,'\r') == true) return true;
     else if (tryLineBreak(filename,title,'\n') == true) return true;
     else return false;
@@ -193,4 +204,24 @@ bool csvReader::tryLineBreak(std::string filename, bool title, char lineBreak) {
     }
     infile.close();
     return true;
+}
+
+csvReader & csvReader::operator=(const csvReader & src) {
+    if (this != &src) {
+        this->clearAllInstantVariables();
+        deepCopy(src);
+    }
+    return *this;
+}
+
+
+void csvReader::deepCopy(const csvReader & src) {
+    address = src.address;
+    hastitle = src.hastitle;
+    arma::mat buffer(src.data);
+    data = buffer;
+    nRows = src.nRows;
+    nCols = src.nCols;
+    titleList = src.titleList;
+    warning = src.warning;
 }

@@ -617,34 +617,35 @@ void MainWindow::on_residualbutton_clicked()
     if (methodtype == 3)
     {
         LSregression robustls(csvreader);
-        robustregression robregression(robustls);
-        robregression.set(dataX, dataY);
-        robregression.setSignificance(significance_num);
-        robregression.setT(t_num);
-        robregression.solve();
+        robustls.set(dataX,dataY);
+//        robustls.setSignificance(significance_num);
+//        robustls.solve();
+//        robustls.CookMeasure();
+//        robustregression robregression(robustls);
+//        robregression.setT(t_num);
+//        robregression.solve();
 
-        // New summary
-        std::vector<std::vector<std::string> > robanalysis;
-        robregression.ResidualAnalysis(iscookmeasure, robanalysis);
-        putResidualsummary(robanalysis);
+//        // New summary
+//        std::vector<std::vector<std::string> > robanalysis;
+//        robregression.ResidualAnalysis(iscookmeasure, robanalysis);
+//        putResidualsummary(robanalysis);
 
-        // Check if it can plot
-        if (dataX.size() == 1)
-        {
-            // Plot scatter points
-            arma::mat robX = robregression.getX();
-            arma::mat robY = robregression.getY();
-            plotScatter(robX, robY, robregression);
+//        // Check if it can plot
+//        if (dataX.size() == 1)
+//        {
+//            // Plot scatter points
+//            arma::mat robX = robregression.getX();
+//            arma::mat robY = robregression.getY();
+//            plotScatter(robX, robY, robregression);
 
-            // Plot line
-            arma::mat robdata = robregression.getbetaHat();
-            double robdata0 = robdata(0);
-            double robdata1 = robdata(1);
-            plotRegressionLine(robdata0, robdata1);
+//            // Plot line
+//            arma::mat robdata = robregression.getbetaHat();
+//            double robdata0 = robdata(0);
+//            double robdata1 = robdata(1);
+//            plotRegressionLine(robdata0, robdata1);
         }
     }
 
-}
 
 void MainWindow::plotScatter(arma::mat & X, arma::mat & Y, LSregression lsregression)
 {

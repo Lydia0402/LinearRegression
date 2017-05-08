@@ -30,13 +30,13 @@ int main(int argc, char *argv[]){
 
 //    std::cout<<f.pdf(8)<<"a"<<f.pValue(8);
 //    csvReader a;
-//    if (!a.readData("/Users/alan/Code/CPP_regression_project/LinearRegression-Lydia/res/data3.csv",true)) std::cout <<a.getWarning();
+//    if (!a.readData("B4.csv",true)) std::cout <<a.getWarning();
 //    for (std::string b: a.getTitleList() ) {
 //        std::cout <<b<<'\n';
 //    }
 //    arma::cout <<a.getDataMatrix();
 //    LSregression b(a);
-//    std::vector<int> in = {1};
+//    std::vector<int> in = {1,2};
 //    if (!b.set(in,0)) std::cout<<b.getWarning();
 //    else {
 ////        arma::cout<< b.getY();
@@ -76,4 +76,3 @@ int main(int argc, char *argv[]){
 
 
     }
-
