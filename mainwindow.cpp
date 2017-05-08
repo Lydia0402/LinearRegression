@@ -22,9 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 
 {
-    pri_csvreader = csvreader;
-
-//    pri_csvreader.readData(pri_csvreader.filePath(), pri_csvreader.hasTitle());
     setupUi(this);
 }
 
@@ -43,8 +40,7 @@ void MainWindow::on_exitButton_clicked()
 
 void MainWindow::putdata()
 {
-//    pri_csvreader.readData(csvreader.filePath(), csvreader.hasTitle());
-
+    pri_csvreader = csvreader;
     this->residualtable->setVisible(false);
     this->datatable->setVisible(true);
     QStandardItemModel *model;
@@ -273,7 +269,10 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Simple Least Square Regression")
     {
         methodtype = 1;
+
+        // Set method data
         pri_ls_simple.setDataSource(pri_csvreader);
+
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
@@ -294,7 +293,10 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Multiple Least Square Regression")
     {
         methodtype = 2;
+
+        // Set method data
         pri_ls_multi.setDataSource(pri_csvreader);
+
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
@@ -315,8 +317,11 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Robust Regression")
     {
         methodtype = 3;
+
+        // Set method data
         pri_ls_rob.setDataSource(pri_csvreader);
-        pri_robregression.setDataSource(pri_ls_rob);
+        pri_robregression.setLSR(pri_ls_rob);
+
         /* This part is to ensure when the user change method during operation,
          * all the button will be disabled again.                               */
         isXset = isYset = false;
@@ -365,20 +370,12 @@ void MainWindow::on_execButton_clicked()
     // Simple Least Square
     if (methodtype == 1)
     {
-//        LSregression lsregression(csvreader);
-//        lsregression.set(dataX, dataY);
-//        lsregression.setSignificance(significance_num);
-//        lsregression.solve();
-//        std::vector<std::vector<std::string>> summary;
-//        std::vector<std::string> text;
-//        lsregression.printSummary(summary, text);
-//        putsummary(summary, text);
         this->pri_ls_simple.set(dataX, dataY);
         this->pri_ls_simple.setSignificance(significance_num);
-        pri_ls_simple.solve();
+        this->pri_ls_simple.solve();
         std::vector<std::vector<std::string>> simsummary;
         std::vector<std::string> simtext;
-        pri_ls_simple.printSummary(simsummary, simtext);
+        this->pri_ls_simple.printSummary(simsummary, simtext);
         putsummary(simsummary, simtext);
 
 
@@ -387,27 +384,27 @@ void MainWindow::on_execButton_clicked()
 //     Multiple Least Square
     if (methodtype == 2)
     {
-        LSregression multiregression(csvreader);
-        multiregression.set(dataX, dataY);
-        multiregression.setSignificance(significance_num);
-        multiregression.solve();
+        this->pri_ls_multi.set(dataX, dataY);
+        this->pri_ls_multi.setSignificance(significance_num);
+        this->pri_ls_multi.solve();
         std::vector<std::vector<std::string>> multisummary;
         std::vector<std::string> multitext;
-        multiregression.printSummary(multisummary, multitext);
+        this->pri_ls_multi.printSummary(multisummary, multitext);
         putsummary(multisummary, multitext);
     }
     // Robust
     if (methodtype == 3)
     {
-        LSregression robregre(csvreader);
-        robregre.set(dataX, dataY);
-        robregre.setSignificance(significance_num);
-        robregre.solve();
-        robustregression robregression(robregre);
-        robregression.solve();
+        this->pri_ls_rob.set(dataX, dataY);
+        this->pri_ls_rob.setSignificance(significance_num);
+        this->pri_ls_rob.solve();
+
+        this->pri_robregression.setLSR(pri_ls_rob);
+        this->pri_robregression.setT(t_num);
         std::vector<std::vector<std::string>> robsummary;
         std::vector<std::string> robtext;
-        robregression.printSummary(robsummary, robtext);
+        this->pri_robregression.solve();
+        this->pri_robregression.printSummary(robsummary, robtext);
         putsummary(robsummary, robtext);
     }
 
@@ -467,7 +464,7 @@ void MainWindow::on_setTbutton_clicked()
     {
         QMessageBox::warning(this,tr("Warning"),("Please input a number."), QMessageBox::Yes);
     }
-    this->significanceedit->clear();
+    this->huberedit->clear();
 
 }
 
@@ -592,23 +589,19 @@ void MainWindow::on_residualbutton_clicked()
     // Simple Least Square
     if (methodtype == 1)
     {
-        LSregression lsregression(csvreader);
-        lsregression.set(dataX, dataY);
-        lsregression.setSignificance(significance_num);
-        lsregression.solve();
-        arma::mat linedata = lsregression.getbetaHat();
+        arma::mat linedata = this->pri_ls_simple.getbetaHat();
         double data0 = linedata(0);
         double data1 = linedata(1);
 
         // New Summary
         std::vector<std::vector<std::string> > analysis;
-        lsregression.ResidualAnalysis(iscookmeasure, analysis);
+        this->pri_ls_simple.ResidualAnalysis(iscookmeasure, analysis);
         putResidualsummary(analysis);
 
         // Plot scatter points
-        arma::mat X = lsregression.getX();
-        arma::mat Y = lsregression.getY();
-        plotScatter(X, Y, lsregression);
+        arma::mat X = this->pri_ls_simple.getX();
+        arma::mat Y = this->pri_ls_simple.getY();
+        plotScatter(X, Y, pri_ls_simple);
 
         // Plot line
         plotRegressionLine(data0, data1);
@@ -618,14 +611,10 @@ void MainWindow::on_residualbutton_clicked()
     // Multiple Least Square
     if (methodtype == 2)
     {
-        LSregression multiregression(csvreader);
-        multiregression.set(dataX, dataY);
-        multiregression.setSignificance(significance_num);
-        multiregression.solve();
 
         // New summary
         std::vector<std::vector<std::string> > multianalysis;
-        multiregression.ResidualAnalysis(iscookmeasure, multianalysis);
+        this->pri_ls_multi.ResidualAnalysis(iscookmeasure, multianalysis);
         putResidualsummary(multianalysis);
 
     }
@@ -633,30 +622,22 @@ void MainWindow::on_residualbutton_clicked()
     // Robust
     if (methodtype == 3)
     {
-        LSregression robustls(csvreader);
-        robustls.set(dataX,dataY);
-        robustls.setSignificance(significance_num);
-        robustls.solve();
-//        robustls.CookMeasure();
-        robustregression robregression(robustls);
-        robregression.setT(t_num);
-        robregression.solve();
 
         // New summary
         std::vector<std::vector<std::string> > robanalysis;
-        robregression.ResidualAnalysis(iscookmeasure, robanalysis);
+        this->pri_robregression.ResidualAnalysis(iscookmeasure, robanalysis);
         putResidualsummary(robanalysis);
 
         // Check if it can plot
         if (dataX.size() == 1)
         {
             // Plot scatter points
-            arma::mat robX = robregression.getX();
-            arma::mat robY = robregression.getY();
-            plotScatter(robX, robY, robregression);
+            arma::mat robX = this->pri_robregression.getX();
+            arma::mat robY = this->pri_robregression.getY();
+            plotScatter(robX, robY, pri_robregression);
 
             // Plot line
-            arma::mat robdata = robregression.getbetaHat();
+            arma::mat robdata = this->pri_robregression.getbetaHat();
             double robdata0 = robdata(0);
             double robdata1 = robdata(1);
             plotRegressionLine(robdata0, robdata1);
@@ -778,6 +759,7 @@ void MainWindow::plotRegressionLine(double beta0, double beta1)
 
 void MainWindow::on_deletebutton_clicked()
 {
+    deletetimes ++;
     restorebutton->setEnabled(true);
     deleterow.clear();
     this->textBrowser->clear();
@@ -794,41 +776,62 @@ void MainWindow::on_deletebutton_clicked()
            Item->setCheckState(Qt::Unchecked);
         }
     }
+    if (deleterow.size() == 0)
+    {
+        QMessageBox::warning(this,tr("Warning"),("Please select at least one row."), QMessageBox::Yes);
+    }
+    // Regression stack operation for simple
+    if (methodtype == 1)
+    {
+        residualStack<LSregression> stack(& regression);
+        LSregression *newregression = stack.push(deleterow);
 
-    // Regression stack operation
-    LSregression regression(csvreader);
-    regression.set(dataX, dataY);
-    regression.setSignificance(significance_num);
-    regression.solve();
-    residualStack<LSregression> stack(& regression);
-    LSregression *newregression = stack.push(deleterow);
+        // Change summary
+        std::vector<std::vector<std::string>> newsummary;
+        std::vector<std::string> newtext;
+        newregression->printSummary(newsummary, newtext);
+        putsummary(newsummary, newtext);
 
-    // Change summary
-    std::vector<std::vector<std::string>> newsummary;
-    std::vector<std::string> newtext;
-    newregression->printSummary(newsummary, newtext);
-    putsummary(newsummary, newtext);
+        // Change table
+        std::vector<std::vector<std::string> > analysis;
+        newregression->ResidualAnalysis(iscookmeasure, analysis);
+        putResidualsummary(analysis);
 
-    // Change table
-    std::vector<std::vector<std::string> > analysis;
-    newregression->ResidualAnalysis(iscookmeasure, analysis);
-    putResidualsummary(analysis);
+        // Draw graph
+        // Draw scatter
+        this->graph->clearGraphs();
+        arma::mat X = newregression->getX();
+        arma::mat Y = newregression->getY();
+        plotScatter(X, Y, *newregression);
+        // Draw line
+        arma::mat linedata = newregression->getbetaHat();
+        double data0 = linedata(0);
+        double data1 = linedata(1);
+        plotRegressionLine(data0, data1);
+    }
+    if (methodtype == 2)
+    {
 
-    // Draw graph
-    // Draw scatter
-    this->graph->clearGraphs();
-    arma::mat X = newregression->getX();
-    arma::mat Y = newregression->getY();
-    plotScatter(X, Y, *newregression);
-    // Draw line
-    arma::mat linedata = newregression->getbetaHat();
-    double data0 = linedata(0);
-    double data1 = linedata(1);
-    plotRegressionLine(data0, data1);
+    }
+    if (methodtype == 3)
+    {
+
+    }
+
+
+
+
+
+
+
 
 }
 
 void MainWindow::on_restorebutton_clicked()
 {
-//
+    deletetimes --;
+    if (deletetimes == 0)
+    {
+        restorebutton->setEnabled(false);
+    }
 }

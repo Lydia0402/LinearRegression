@@ -23,6 +23,19 @@ robustregression::robustregression(LSregression LSR) {
     warning = LSR.getWarning();
 }
 
+void robustregression::setLSR(LSregression LSR) {
+    initial = LSR;
+    X = LSR.getX();
+    Y = LSR.getY();
+    reader = LSR.getReader();
+    listOfSelected = LSR.getlistOfSelected();
+    y = LSR.gety();
+    data = LSR.getData();
+    n = LSR.getN();
+    k = LSR.getK();
+    significanceLevel = LSR.getSignificance();
+    warning = LSR.getWarning();
+}
 
 // I use gradient decent to solve robust regression problem.
 

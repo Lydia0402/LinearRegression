@@ -7,6 +7,7 @@
 #include "lsregression.h"
 #include "csvreader.h"
 #include "robustregression.h"
+#include
 
 class QAction;
 class QLabel;
@@ -64,6 +65,7 @@ private:
     LSregression pri_ls_multi;
     LSregression pri_ls_rob;
     robustregression pri_robregression;
+    int deletetimes = 0;
 
     Ui::MainWindow *ui;
 

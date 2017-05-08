@@ -11,6 +11,7 @@ public:
     robustregression();
     robustregression(csvReader read);
     robustregression(LSregression LSR);
+    void setLSR(LSregression LSR);
     bool setT(double t);
     bool solve();
 
