@@ -20,49 +20,6 @@
    <string>LinearRregression</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QComboBox" name="methodcombobox">
-    <property name="geometry">
-     <rect>
-      <x>100</x>
-      <y>10</y>
-      <width>311</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <item>
-     <property name="text">
-      <string>Please select</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Simple Least Square Regression</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Multiple Least Square Regression</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Robust Regression</string>
-     </property>
-    </item>
-   </widget>
-   <widget class="QLabel" name="methodlabel">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>10</y>
-      <width>61</width>
-      <height>21</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Method</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="exitButton">
     <property name="geometry">
      <rect>
@@ -74,28 +31,6 @@
     </property>
     <property name="text">
      <string>Exit</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="execButton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>10</y>
-      <width>61</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Exec</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
     </property>
    </widget>
    <widget class="QTableView" name="datatable">
@@ -112,178 +47,6 @@
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="setybutton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>90</y>
-      <width>61</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Set Y</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="setxbutton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>440</x>
-      <y>50</y>
-      <width>61</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Set X</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="significance">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>10</y>
-      <width>231</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Significance Level (Default = 0.05)</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="setSbutton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>960</x>
-      <y>10</y>
-      <width>51</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Set</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="significanceedit">
-    <property name="geometry">
-     <rect>
-      <x>860</x>
-      <y>10</y>
-      <width>81</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="cookmeasure">
-    <property name="geometry">
-     <rect>
-      <x>710</x>
-      <y>70</y>
-      <width>131</width>
-      <height>22</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Cook's Measure</string>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="huber">
-    <property name="geometry">
-     <rect>
-      <x>630</x>
-      <y>40</y>
-      <width>211</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Huber's function (t) (Default t = 2)</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="huberedit">
-    <property name="geometry">
-     <rect>
-      <x>860</x>
-      <y>40</y>
-      <width>81</width>
-      <height>24</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="setTbutton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>960</x>
-      <y>40</y>
-      <width>51</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Set</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="residualbutton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>860</x>
-      <y>70</y>
-      <width>151</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Residual Analysis</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
     </property>
    </widget>
    <widget class="QTabWidget" name="tabWidget">
@@ -348,50 +111,271 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="deletebutton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>670</x>
-      <y>110</y>
-      <width>171</width>
-      <height>24</height>
+      <x>30</x>
+      <y>10</y>
+      <width>381</width>
+      <height>26</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Delete chosen outliers</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
-    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="methodlabel">
+       <property name="text">
+        <string>Method</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="methodcombobox">
+       <item>
+        <property name="text">
+         <string>Please select</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Simple Least Square Regression</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Multiple Least Square Regression</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Robust Regression</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
    </widget>
-   <widget class="QPushButton" name="restorebutton">
-    <property name="enabled">
-     <bool>false</bool>
-    </property>
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>860</x>
-      <y>110</y>
-      <width>151</width>
-      <height>24</height>
+      <x>440</x>
+      <y>10</y>
+      <width>82</width>
+      <height>101</height>
      </rect>
     </property>
-    <property name="text">
-     <string>Restore</string>
-    </property>
-    <property name="autoDefault">
-     <bool>true</bool>
-    </property>
-    <property name="default">
-     <bool>true</bool>
-    </property>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QPushButton" name="execButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Exec</string>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="setxbutton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Set X</string>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="setybutton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Set Y</string>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>10</y>
+      <width>433</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="significance">
+           <property name="text">
+            <string>Significance Level (Default = 0.05)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="significanceedit"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="setSbutton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Set</string>
+           </property>
+           <property name="autoDefault">
+            <bool>true</bool>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <item>
+          <widget class="QLabel" name="huber">
+           <property name="text">
+            <string>Huber's function (t) (Default t = 2)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="huberedit"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="setTbutton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>Set</string>
+           </property>
+           <property name="autoDefault">
+            <bool>true</bool>
+           </property>
+           <property name="default">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QCheckBox" name="cookmeasure">
+         <property name="text">
+          <string>Cook's Measure</string>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="residualbutton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Residual Analysis</string>
+         </property>
+         <property name="autoDefault">
+          <bool>true</bool>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="QPushButton" name="deletebutton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Delete chosen outliers</string>
+         </property>
+         <property name="autoDefault">
+          <bool>true</bool>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="restorebutton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Restore</string>
+         </property>
+         <property name="autoDefault">
+          <bool>true</bool>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+   <zorder>methodcombobox</zorder>
+   <zorder>methodlabel</zorder>
+   <zorder>exitButton</zorder>
+   <zorder>execButton</zorder>
+   <zorder>datatable</zorder>
+   <zorder>setybutton</zorder>
+   <zorder>setxbutton</zorder>
+   <zorder>significance</zorder>
+   <zorder>setSbutton</zorder>
+   <zorder>significanceedit</zorder>
+   <zorder>cookmeasure</zorder>
+   <zorder>huber</zorder>
+   <zorder>huberedit</zorder>
+   <zorder>setTbutton</zorder>
+   <zorder>residualbutton</zorder>
+   <zorder>tabWidget</zorder>
+   <zorder>residualtable</zorder>
+   <zorder>deletebutton</zorder>
+   <zorder>restorebutton</zorder>
+   <zorder>restorebutton</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -399,7 +383,7 @@
      <x>0</x>
      <y>0</y>
      <width>1085</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

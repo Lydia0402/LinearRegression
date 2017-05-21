@@ -16,8 +16,6 @@
 
 extern csvReader csvreader;
 
-//csvReader pri_csvreader() = csvreader;
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 
@@ -104,7 +102,6 @@ void MainWindow::col_select_test()
     {
         setxbutton->setEnabled(true);
         setybutton->setEnabled(true);
-//        cookmeasure->setCheckable(true);
 
     }
     else col_set = true;
@@ -140,7 +137,6 @@ void MainWindow::on_setxbutton_clicked()
 
     // Get the changed checkbox.
 
-//    std::vector<int> tempvec;
     for (int i = 1; i < pri_csvreader.getNCols() + 1; i++)
     {
         QStandardItem *Item = _model->item(0, i);
@@ -194,7 +190,6 @@ void MainWindow::on_setybutton_clicked()
     if (isXset)
     {
         setSbutton->setEnabled(true);
-//        cookmeasure->setCheckable(true);
         execButton->setEnabled(true);
     }
 
@@ -236,11 +231,6 @@ void MainWindow::on_setybutton_clicked()
 
 void MainWindow::on_methodcombobox_activated(const QString &arg1)
 {
-    this->datatable->setVisible(true);
-    this->residualtable->setVisible(false);
-    this->textBrowser->clear();
-    this->graph->clearGraphs();
-
     // Background reset.
     QStandardItemModel *_model = static_cast<QStandardItemModel*>(this->datatable->model());
     for (int i = 1; i < pri_csvreader.getNRows() + 1; i++)
@@ -255,18 +245,28 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     // Three method and default text
     if (arg1 == "Please select")
     {
+        this->datatable->setVisible(true);
+        this->residualtable->setVisible(false);
+        this->textBrowser->clear();
+        this->graph->setHidden(true);
+        this->tabWidget->setCurrentIndex(0);
         cookmeasure->setCheckable(false);
         setxbutton->setEnabled(false);
         setybutton->setEnabled(false);
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
-        this->graph->clearGraphs();
+        deletebutton->setEnabled(false);
     }
 
     if (arg1 == "Simple Least Square Regression")
     {
         methodtype = 1;
+        this->datatable->setVisible(true);
+        this->residualtable->setVisible(false);
+        this->textBrowser->clear();
+        this->graph->setHidden(true);
+        this->tabWidget->setCurrentIndex(0);
 
         // Set method data
         pri_ls_simple.setDataSource(pri_csvreader);
@@ -280,7 +280,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
-        this->graph->clearGraphs();
+        deletebutton->setEnabled(false);
 
         methodActivated = true;
         if (col_set){
@@ -292,6 +292,11 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Multiple Least Square Regression")
     {
         methodtype = 2;
+        this->datatable->setVisible(true);
+        this->residualtable->setVisible(false);
+        this->textBrowser->clear();
+        this->graph->setHidden(true);
+        this->tabWidget->setCurrentIndex(0);
 
         // Set method data
         pri_ls_multi.setDataSource(pri_csvreader);
@@ -305,7 +310,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
-        this->graph->clearGraphs();
+        deletebutton->setEnabled(false);
 
         methodActivated = true;
 
@@ -318,6 +323,11 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
     if (arg1 == "Robust Regression")
     {
         methodtype = 3;
+        this->datatable->setVisible(true);
+        this->residualtable->setVisible(false);
+        this->textBrowser->clear();
+        this->graph->setHidden(true);
+        this->tabWidget->setCurrentIndex(0);
 
         // Set method data
         pri_ls_rob.setDataSource(pri_csvreader);
@@ -332,7 +342,7 @@ void MainWindow::on_methodcombobox_activated(const QString &arg1)
         setSbutton->setEnabled(false);
         execButton->setEnabled(false);
         setTbutton->setEnabled(false);
-        this->graph->clearGraphs();
+        deletebutton->setEnabled(false);
 
         methodActivated = true;
         isrobust = true;
@@ -653,6 +663,7 @@ void MainWindow::on_residualbutton_clicked()
 
 void MainWindow::plotScatter(arma::mat & X, arma::mat & Y, LSregression lsregression)
 {
+    this->graph->setHidden(false);
     int nonOutliersize = nonOutlier.size();
     int outliersize = outlierIndex.size();
     QVector<double> x0(nonOutliersize), y0(nonOutliersize);
@@ -701,6 +712,7 @@ void MainWindow::plotScatter(arma::mat & X, arma::mat & Y, LSregression lsregres
 
 void MainWindow::plotScatter(arma::mat & X, arma::mat & Y, robustregression lsregression)
 {
+    this->graph->setHidden(false);
     int nonOutliersize = nonOutlier.size();
     int outliersize = outlierIndex.size();
     QVector<double> x0(nonOutliersize), y0(nonOutliersize);

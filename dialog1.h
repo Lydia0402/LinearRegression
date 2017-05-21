@@ -10,10 +10,6 @@
  * 2. Judge the validity of the file or path.
  * 3. Collect the imformation (Whether the csv file hava a title) */
 
-//namespace DialogUI {
-//class Dialog1;
-//}
-
 class Dialog1 : public QDialog, Ui::Dialog1
 {
     Q_OBJECT
@@ -21,15 +17,10 @@ class Dialog1 : public QDialog, Ui::Dialog1
 public:
     explicit Dialog1(QWidget *parent = 0);
 
-
-//    explicit Dialog1(QWidget *parent = 0);
     ~Dialog1();
 
 private slots:
     void on_lineEdit_textChanged();
-
-//private:
-//    DialogUI::Dialog1 *ui2;
 
     void on_enterButton_clicked();
     void on_checkBox_clicked();

@@ -9,12 +9,13 @@
 #include "robustregression.h"
 #include "residual.h"
 
+/* This class is the main window of linear regression project
+ * This window contains a lot of buttons, labels, data table,
+ * widgets, edit lines, etc.
+ * This is the main part of GUI of this project*/
+
 class QAction;
 class QLabel;
-
-//namespace Ui {
-//class MainWindow;
-//}
 
 
 class MainWindow : public QMainWindow, Ui::MainWindow
@@ -27,16 +28,24 @@ public:
 
     void putdata();
 
+    /*Put summary method, which will put summary in the first tab in tab widget,
+    * Parameters are summary and the text get from the lsregression summary method*/
     void putsummary(std::vector<std::vector<std::string>> summary, std::vector<std::string> text);
 
 
 
 private slots:
-    void on_exitButton_clicked();
 
+    /*These two privite slots are defined by myself,
+     * which are used to detect the state change of
+     * the check box in the data table          */
     void col_select_test();
-
     void row_select_test();
+
+    /*These slots are corresponding to the buttons.
+     * The name are defined by built-in rule
+     * The implementation are made by me.*/
+    void on_exitButton_clicked();
 
     void on_setxbutton_clicked();
 
@@ -60,6 +69,9 @@ private slots:
 
 private:
 
+    /* This part are all the privite csvreader,
+     * regression, and regression stack,
+     * In order to share data between functions*/
     csvReader pri_csvreader;
     LSregression pri_ls_simple;
     LSregression pri_ls_multi;
@@ -95,6 +107,7 @@ private:
 
     int methodtype = 0;
 
+    // These bool state are used to do button activation
     bool methodActivated = false;
     bool col_set = false;
     bool isrobust = false;
@@ -105,9 +118,6 @@ private:
     int residualRow;
     int residualCol;
 
-
-//protected:
-//    void closeEvent(QCloseEvent *event);
 };
 
 

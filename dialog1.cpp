@@ -1,18 +1,3 @@
-//#include "dialog1.h"
-//#include "ui_dialog1.h"
-
-//Dialog1::Dialog1(QWidget *parent) :
-//    QDialog(parent),
-//    ui(new Ui::Dialog1)
-//{
-//    ui->setupUi(this);
-//}
-
-//Dialog1::~Dialog1()
-//{
-//    delete ui;
-//}
-
 #include <QtGui>
 #include "dialog1.h"
 #include "qmessagebox.h"
@@ -27,12 +12,6 @@ bool checkboxval = false;
 Dialog1::Dialog1(QWidget *parent) : QDialog(parent)
 {
     setupUi(this);
-
-//    QRegExp regExp("");
-//    lineEdit->setValidator(new QRegExpValidator(regExp, this));
-
-//    connect(enterButton, SIGNAL(clicked()), this, SLOT(accept()));
-//    connect(enterButton, SIGNAL(clicked()), this, SLOT(on_checkBox_clicked(checkboxval)));
 }
 
 Dialog1::~Dialog1()
@@ -55,7 +34,7 @@ void Dialog1::on_checkBox_clicked()
 
 void Dialog1::on_enterButton_clicked()
 {
-//    if (checkboxval == true ) QMessageBox::warning(this,tr("Warning"),("checkbox."),QMessageBox::Yes);  // check the state of check box
+
     std::string s = this->lineEdit->text().toStdString();
     if (csvreader.readData(s, checkboxval))                                     // Judge
         accept();
